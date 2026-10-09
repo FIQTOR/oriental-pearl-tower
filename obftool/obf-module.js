@@ -47,11 +47,15 @@ let obf = 0;
 html = html.replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi, (full, attrs, body) => {
   const isModule = /type\s*=\s*["']module["']/i.test(attrs);
   const isImportmap = /type\s*=\s*["']importmap["']/i.test(attrs);
-  if (!isModule || isImportmap || !body.trim()) return full;
+  const isData = /type\s*=\s*["']application\/(ld\+json|json)["']/i.test(attrs);
+  const hasSrc = /\bsrc\s*=/i.test(attrs);
+  if (isImportmap || isData || hasSrc || !body.trim()) return full;
   try {
-    const out = Obfuscator.obfuscate(body, OPTS).getObfuscatedCode();
+    // clone opts; only module scripts use sourceType:'module' + preserve top-level await
+    const opts = Object.assign({}, OPTS, isModule ? {} : { sourceType: 'script' });
+    const out = Obfuscator.obfuscate(body, opts).getObfuscatedCode();
     obf++;
-    console.log(`  [obf-module] ${body.length} -> ${out.length} bytes`);
+    console.log(`  [obf${isModule ? '-module' : ''}] ${body.length} -> ${out.length} bytes`);
     return `<script${attrs}>${out}</script>`;
   } catch (e) {
     console.error('  [SKIP] ' + e.message);

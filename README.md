@@ -40,13 +40,18 @@ A real-time, interactive 3D explorer for the **Oriental Pearl Tower (东方明�
 ```
 .
 ├── index.html                 # The whole experience (obfuscated, production build)
-├── oriental-pearl-tower.glb   # Draco-compressed 3D model (16 MB)
+├── oriental-pearl-tower.glb   # Draco-compressed 3D model (16 MB, preloaded in parallel)
 ├── draco/                     # Local Draco decoder (js + wasm) with CDN fallbacks
 │   ├── draco_decoder.js
 │   ├── draco_decoder.wasm
 │   └── draco_wasm_wrapper.js
+├── favicon.ico / favicon.svg / apple-touch-icon.png / icon-*.png
+├── manifest.webmanifest       # PWA manifest
+├── og-image.png               # Social preview image
+├── robots.txt / sitemap.xml   # SEO
+├── vercel.json                # Deploy headers (GLB + Draco caching, security)
 ├── obftool/
-│   └── obf-module.js          # Build tool: obfuscates the <script type="module">
+│   └── obf-module.js          # Build tool: obfuscates inline <script> blocks
 └── README.md
 ```
 
