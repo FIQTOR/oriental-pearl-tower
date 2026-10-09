@@ -40,6 +40,7 @@ A real-time, interactive 3D explorer for the **Oriental Pearl Tower (东方明�
 ```
 .
 ├── index.html                 # The whole experience (obfuscated, production build)
+├── src/index.original.html    # Readable source (kept in repo)
 ├── oriental-pearl-tower.glb   # Draco-compressed 3D model (16 MB, preloaded in parallel)
 ├── draco/                     # Local Draco decoder (js + wasm) with CDN fallbacks
 │   ├── draco_decoder.js
@@ -72,11 +73,21 @@ or any static host / Vercel / Netlify / GitHub Pages.
 The published `index.html` is **minified & obfuscated** (control-flow flattening + base64 string encryption) with a lightweight anti-copy layer that blocks right-click, DevTools shortcuts (`F12`, `Ctrl+U`, `Ctrl+Shift+I/J/C`…) and iframe embedding.
 
 ```bash
-# rebuild the obfuscated page from a readable source
+# rebuild the obfuscated page from the readable source
 NODE_PATH=./node_modules node obftool/obf-module.js src/index.original.html index.html
 ```
 
-> The readable source is intentionally **not** published here — client-side code can never be fully hidden, and obfuscation raises the bar rather than making reverse-engineering impossible.
+### Loading experience
+
+The 16 MB GLB is fetched from a tiny inline `<script>` in `<head>` — **before** Three.js
+loads — so the download starts immediately and in parallel. The download itself is read
+through a `ReadableStream` reader so the progress bar reflects **real bytes received**
+(`x MB / 16.1 MB`), instead of jumping from 0% to 100% at the end. Progress is stored
+before the DOM exists and applied on `DOMContentLoaded`.
+
+> The readable source (`src/index.original.html`) is kept in-repo for maintenance; the
+> published `index.html` is the obfuscated build. Client-side code can never be fully
+> hidden — obfuscation raises the bar rather than making reverse-engineering impossible.
 
 ## 📄 License & Credits
 

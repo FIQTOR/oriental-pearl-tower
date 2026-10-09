@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Oriental Pearl Tower 3D · 东方明珠 Shanghai | Model Interaktif oleh FIQTOR</title>
+<meta name="description" content="Jelajahi Menara Mutiara Oriental (东方明珠) Shanghai dalam 3D interaktif. Putar, zoom, bongkar puluhan komponen strukturnya, atur arah matahari, dan lihat versi malamnya.">
+<meta name="keywords" content="Oriental Pearl Tower, 东方明珠, Menara Mutiara Oriental, Shanghai, model 3D, three.js, menara Shanghai, FIQTOR">
+<meta name="author" content="FIQTOR">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#dce6f4">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://oriental-pearl-tower.vercel.app/">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Oriental Pearl Tower 3D">
+<meta property="og:locale" content="id_ID">
+<meta property="og:title" content="Oriental Pearl Tower 3D · 东方明珠 Shanghai">
+<meta property="og:description" content="Model 3D interaktif Menara Mutiara Oriental. Putar, zoom, dan bongkar komponennya.">
+<meta property="og:url" content="https://oriental-pearl-tower.vercel.app/">
+<meta property="og:image" content="https://oriental-pearl-tower.vercel.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Ilustrasi Menara Mutiara Oriental Shanghai dengan dua bola merah muda di langit senja">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Oriental Pearl Tower 3D · 东方明珠 Shanghai">
+<meta name="twitter:description" content="Model 3D interaktif Menara Mutiara Oriental. Putar, zoom, dan bongkar komponennya.">
+<meta name="twitter:image" content="https://oriental-pearl-tower.vercel.app/og-image.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[
+{"@type":"WebSite","@id":"https://oriental-pearl-tower.vercel.app/#site","url":"https://oriental-pearl-tower.vercel.app/","name":"Oriental Pearl Tower 3D","inLanguage":"id","publisher":{"@id":"https://oriental-pearl-tower.vercel.app/#org"}},
+{"@type":"WebPage","url":"https://oriental-pearl-tower.vercel.app/","name":"Oriental Pearl Tower 3D · 东方明珠 Shanghai","description":"Model 3D interaktif Menara Mutiara Oriental, Shanghai.","inLanguage":"id","isPartOf":{"@id":"https://oriental-pearl-tower.vercel.app/#site"},"primaryImageOfPage":"https://oriental-pearl-tower.vercel.app/og-image.png","about":{"@type":"Place","name":"Oriental Pearl Radio & TV Tower","address":{"@type":"PostalAddress","addressLocality":"Pudong, Shanghai","addressCountry":"CN"}}},
+{"@type":"Organization","@id":"https://oriental-pearl-tower.vercel.app/#org","name":"FIQTOR"}]}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&text=%E4%B8%9C%E6%96%B9%E6%98%8E%E7%8F%A0&display=swap" rel="stylesheet">
+<script>
+/* Unduh GLB sedini mungkin, paralel dengan three.js, sambil MENGHITUNG PROGRES
+   nyata di sini (bukan nanti setelah three.js selesai) supaya bar langsung bergerak.
+   Catatan: elemen #lt/#lb belum ada di DOM saat script ini jalan, jadi akses
+   elemen dilakukan lazy + progres terakhir disimpan untuk diterapkan saat DOM siap. */
+(function(){
+  var lastPct=0.02,lastMsg='Menghubungkan…',domReady=false;
+  function apply(){
+    if(!domReady)return;
+    var lt=document.getElementById('lt'),lb=document.getElementById('lb');
+    if(lt&&lastMsg)lt.textContent=lastMsg;
+    if(lb)lb.style.width=Math.round(Math.max(0,Math.min(1,lastPct))*100)+'%';
+  }
+  function stage(s){lastMsg=s;apply()}
+  function setp(f){if(f>lastPct)lastPct=f;apply()}
+  function onReady(){domReady=true;apply()}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',onReady,{once:true});
+  else onReady();
+  window.__glbProg={setp:setp,stage:stage};
+  window.__glb=fetch('./oriental-pearl-tower.glb',{cache:'default'}).then(function(r){
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    var total=+r.headers.get('content-length')||0;
+    if(!r.body||!r.body.getReader){return r}
+    var rd=r.body.getReader(),got=0,chunks=[],last=0;
+    return new Promise(function(res,rej){
+      (function pump(){
+        rd.read().then(function(x){
+          if(x.done){
+            var buf=new Uint8Array(got),o=0;
+            for(var i=0;i<chunks.length;i++){buf.set(chunks[i],o);o+=chunks[i].length}
+            var R2=new Response(buf,{headers:{'Content-Type':'model/gltf-binary','Content-Length':String(got)}});
+            R2._buffer=buf.buffer;res(R2);return;
+          }
+          chunks.push(x.value);got+=x.value.length;
+          var f=total?got/total:Math.min(.98,got/17.6e6);
+          /* geser rentang unduh GLB ke 5%–80% dari total, sisakan untuk parse */
+          setp(.05+.75*f);
+          stage('Mengunduh model 3D… '+Math.round(f*100)+'%  ('+(got/1048576).toFixed(1)+' MB'+(total?' / '+(total/1048576).toFixed(1)+' MB':'')+')');
+          if(performance.now()-last>120){last=performance.now()}
+          pump();
+        }).catch(rej);
+      })();
+    });
+  }).catch(function(e){window.__glbErr=e;return null});
+})();
+</script>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/loaders/GLTFLoader.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/loaders/DRACOLoader.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/controls/OrbitControls.js" crossorigin>
+<link rel="preload" href="./draco/draco_wasm_wrapper.js" as="script" crossorigin>
+<link rel="preload" href="./draco/draco_decoder.wasm" as="fetch" crossorigin>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"}}</script>
+<style>
+:root{--ink:#12203a;--mut:#4d5d78;--acc:#c42a6b;--line:rgba(18,32,58,.18);--pan:rgba(255,255,255,.66);--btn:#12203a;--btnt:#fff;--bg1:#f2f6fc;--bg2:#b9cce6;box-sizing:border-box}
+:root[data-mode=night]{--ink:#eef1ff;--mut:#aab4dc;--acc:#ff5aa5;--line:rgba(238,241,255,.2);--pan:rgba(14,18,58,.6);--btn:#ff5aa5;--btnt:#1a0b18}
+html,body{height:100%;margin:0}
+body{background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--ink);font-family:'Instrument Sans',system-ui,sans-serif;overflow:hidden}
+#nb{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0;background:radial-gradient(1.5px 1.5px at 12% 18%,#fff8,transparent),radial-gradient(1.5px 1.5px at 78% 12%,#fff8,transparent),radial-gradient(1px 1px at 40% 8%,#fff8,transparent),radial-gradient(1px 1px at 63% 26%,#fff6,transparent),radial-gradient(1.5px 1.5px at 90% 38%,#fff7,transparent),radial-gradient(1px 1px at 22% 34%,#fff6,transparent),linear-gradient(180deg,#1d2260,#05071d)}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+canvas:active{cursor:grabbing}
+.ui,.bd,#ld{--tr:color .9s,background-color .9s,border-color .9s}
+.ui *{transition:var(--tr)}
+.ui{position:fixed;inset:0;padding:max(28px,env(safe-area-inset-top,0px)) 32px max(40px,env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:minmax(280px,360px) 1fr minmax(250px,310px);grid-template-rows:auto auto 1fr;grid-template-areas:"hd . r" "ctl . r" "pn . r";column-gap:24px;pointer-events:none;box-sizing:border-box}
+.ui>*{pointer-events:auto}
+.hd{grid-area:hd}
+.zh{font-family:'Noto Serif SC',serif;font-weight:700;font-size:clamp(44px,6vw,84px);line-height:1;margin:0;color:var(--acc);letter-spacing:.04em}
+h1{font-size:clamp(22px,2.6vw,34px);line-height:1.15;margin:14px 0 10px;font-weight:700;letter-spacing:-.01em}
+.hd p{margin:0;color:var(--mut);line-height:1.55;font-size:15px;max-width:34ch}
+.ctl{grid-area:ctl;display:flex;gap:10px;flex-wrap:wrap;margin-top:22px;align-self:start}
+.btn{font:600 15px 'Instrument Sans',system-ui,sans-serif;border-radius:999px;padding:13px 22px;border:1px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;transition:var(--tr),transform .15s}
+.btn.main{background:var(--btn);color:var(--btnt);border-color:var(--btn)}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.4;cursor:default}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+.sl{display:flex;gap:14px;width:100%;margin-top:4px}.sl label{font-size:12px;color:var(--mut);display:grid;gap:4px;flex:1}.sl input{accent-color:var(--acc);width:100%;margin:0}
+.pn{grid-area:pn;align-self:end;background:var(--pan);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:14px;padding:16px 18px;font-size:14px;line-height:1.5;color:var(--mut);max-width:340px}
+.pn b{color:var(--ink);font-size:16px}
+.pn .z{margin-left:8px;color:var(--acc)}
+.pn p{margin:6px 0 0}
+.pn .st{margin-top:8px;color:var(--ink);font-weight:600;font-size:13px}
+.r{grid-area:r;background:var(--pan);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:14px;padding:8px 0;overflow:auto;align-self:start;max-height:100%}
+.r h2{font-size:13px;font-weight:500;color:var(--mut);margin:6px 18px 6px}
+.r ul{list-style:none;margin:0;padding:0}
+.r .gh{padding:10px 18px 3px;font-size:12px;font-weight:600;color:var(--mut);border-top:1px solid var(--line)}.r .gh span{color:var(--acc);margin-left:4px}
+.r button{display:grid;grid-template-columns:30px 1fr;gap:4px;width:100%;text-align:left;font:500 14px 'Instrument Sans',system-ui,sans-serif;color:var(--ink);background:none;border:0;border-top:1px solid var(--line);padding:9px 18px;cursor:pointer}
+.r button{transition:color .9s,border-color .9s,background-color .15s}
+.r button i{font-style:normal;color:var(--acc);font-weight:700}
+.r button small{display:block;color:var(--mut);font-size:12px;margin-top:1px}
+.r button:hover,.r button.on{background:rgba(196,42,107,.14)}
+.r button.on{box-shadow:inset 3px 0 var(--acc)}
+.bd{position:fixed;left:0;top:0;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;border:2px solid var(--acc);background:var(--pan);color:var(--ink);font:700 10px 'Instrument Sans',sans-serif;display:grid;place-items:center;cursor:pointer;opacity:0;pointer-events:none;padding:0;z-index:2;transition:var(--tr)}
+.bd.on{background:var(--acc);color:#fff}
+#ld{position:fixed;inset:0;z-index:5;display:grid;place-items:center;text-align:center;background:linear-gradient(180deg,var(--bg1),var(--bg2));transition:opacity .6s}
+#ld.off{opacity:0;pointer-events:none}
+#ld .bar{width:220px;height:4px;border-radius:4px;background:var(--line);margin:14px auto 0;overflow:hidden}
+#ld .bar i{display:block;height:100%;width:0;background:var(--acc);transition:width .2s}
+#ld .hint{margin:10px 0 0;color:var(--mut);font-size:12px;opacity:.85}
+#ld p{margin:0;color:var(--mut);font-size:14px;max-width:36ch;line-height:1.5}
+#ld label{display:inline-block;margin-top:14px}
+.ft{position:fixed;left:0;right:0;bottom:max(8px,env(safe-area-inset-bottom,0px));text-align:center;font-size:12px;color:var(--mut);pointer-events:none;z-index:1;transition:color .9s}
+.ft b{color:var(--ink);letter-spacing:.06em;transition:color .9s}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (max-width:900px){
+.ui{grid-template-columns:1fr;grid-template-rows:auto 1fr auto auto auto;grid-template-areas:"hd" "." "ctl" "pn" "r";padding:max(16px,env(safe-area-inset-top,0px)) 16px max(36px,calc(env(safe-area-inset-bottom,0px) + 28px))}
+.hd p,.sl,.r .gh{display:none}
+.zh{font-size:40px}h1{font-size:18px;margin:6px 0 0}
+.ctl{margin-top:0;margin-bottom:10px}
+.btn{padding:11px 18px;font-size:14px}
+.pn{max-width:none;margin-bottom:10px;padding:12px 14px}
+.r{padding:6px;border-radius:999px;overflow:visible}
+.r h2{display:none}
+.r ul{display:flex;gap:6px;overflow-x:auto}
+.r button{border:1px solid var(--line);border-radius:999px;padding:8px 14px;white-space:nowrap;width:auto;display:flex;gap:8px}
+.r button small{display:none}
+.r button.on{box-shadow:none}
+.ft{font-size:11px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="nb" aria-hidden="true"></div>
+<canvas id="c" role="img" aria-label="Model 3D interaktif Menara Mutiara Oriental, Shanghai"></canvas>
+<main class="ui">
+  <header class="hd">
+    <p class="zh" lang="zh">东方明珠</p>
+    <h1>Menara Mutiara Oriental, Shanghai</h1>
+    <p>Model 468 m dengan detail panel kaca, rangka, dan pencahayaan. Seret untuk memutar, lalu bongkar menjadi <span id="hn">banyak</span> komponen dan satukan lagi.</p>
+  </header>
+  <div class="ctl">
+    <button class="btn main" id="bx" aria-pressed="false" disabled>Pisahkan komponen</button>
+    <button class="btn" id="bn" aria-pressed="false">Mode malam</button>
+    <div class="sl"><label>Arah matahari<input type="range" id="az" min="0" max="360" value="40"></label><label>Ketinggian matahari<input type="range" id="el" min="10" max="80" value="48"></label></div>
+  </div>
+  <div class="pn" id="pn" aria-live="polite"></div>
+  <nav class="r" aria-label="Daftar komponen"><h2 id="hc">Komponen</h2><ul id="ls"></ul></nav>
+</main>
+<footer class="ft">© 2026 Oriental Pearl Tower 3D · Designed &amp; built by <b>FIQTOR</b> · All rights reserved</footer>
+<div id="ld"><div><p id="lt">Memuat model 3D…</p><div class="bar"><i id="lb"></i></div><p class="hint">Model 16 MB · unduhan dimulai sebelum tampilan disiapkan</p></div></div>
+<section class="sr">
+  <h2>Oriental Pearl Tower (东方明珠), menara ikonik Shanghai</h2>
+  <p>Menara Radio dan TV Mutiara Oriental berdiri di distrik Pudong, Shanghai, dengan tinggi 468 meter. Menara ini dikenal lewat bola-bola merah muda yang ditopang tiga tiang miring. Halaman ini menampilkan model 3D interaktifnya: putar dan zoom model, bongkar komponen seperti antena, kapsul, bola atas, tiang dan inti, bola bawah, serta plaza, atur arah matahari, dan lihat tampilan malam hari.</p>
+  <p>Dibuat oleh FIQTOR.</p>
+</section>
+<noscript><p style="position:fixed;inset:0;display:grid;place-items:center;background:#f2f6fc;color:#12203a;margin:0;padding:24px;text-align:center;z-index:9">Halaman ini membutuhkan JavaScript untuk menampilkan model 3D Menara Mutiara Oriental.</p></noscript>
+
+<script type="module">
+const _PB=window.__glbProg||{};
+const M=await Promise.all([
+  import('three'),
+  import('three/addons/controls/OrbitControls.js'),
+  import('three/addons/loaders/GLTFLoader.js'),
+  import('three/addons/loaders/DRACOLoader.js'),
+  import('three/addons/environments/RoomEnvironment.js')
+]);
+_PB.setp&&_PB.setp(.82);_PB.stage&&_PB.stage('Menyiapkan tampilan…');
+const THREE=M[0],{OrbitControls}=M[1],{GLTFLoader}=M[2],{DRACOLoader}=M[3],{RoomEnvironment}=M[4];
+
+const $=s=>document.querySelector(s),pad=n=>String(n).padStart(2,'0');
+const RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const MOB=matchMedia('(pointer:coarse)').matches||innerWidth<=900;
+const nf=new Intl.NumberFormat('id-ID');
+
+/* Lapisan tiap segmen: dipisah lewat nama material di file GLB */
+const LN={frame:'rangka',skin:'kulit panel',glass:'kaca',lights:'lampu',core:'inti & beton',radome:'radome antena',visit:'pengunjung',park:'taman & pohon',paving:'jalan & paving'};
+const LZ={frame:'钢结构',skin:'外立面',glass:'玻璃',lights:'灯光',core:'核心筒',radome:'天线罩',visit:'游客',park:'景观绿化',paving:'广场铺装'};
+const LD={
+frame:'Rangka baja nirkarat, gasket, dan sambungan yang menahan seluruh kulit bangunan.',
+skin:'Panel kulit luar: porselen putih, aluminium, enamel magenta, dan sambungan panel.',
+glass:'Kaca tirai dan kaca pandang. Pada bola, kacanya berwarna merah muda.',
+lights:'Lampu arsitektural. Menyala terang di mode malam.',
+core:'Beton pracetak dan lapisan bayangan interior di dalam struktur.',
+radome:'Penutup antena berwarna pucat.',
+visit:'Figur pengunjung kecil di plaza sebagai penanda skala.',
+park:'Pohon berdaun lebar, semak pangkas, penutup tanah, dan tanah tanam di sekitar plaza.',
+paving:'Aspal jalan, paving granit dan basal, bangku kayu, serta tepian aluminium yang mengelilingi plaza.'};
+const LAY={frame:[0,0,0],skin:[-95,0,0],glass:[95,0,0],lights:[0,0,100],core:[0,0,-100],radome:[-55,0,-55],visit:[0,-45,0],park:[0,-85,0],paving:[0,-125,0]};
+const EXTRA=['visit','park','paving'];
+const SEG=[
+{node:'07_OpenAntenna',n:'Antena terbuka',z:'天线桅杆',y:[0,260,0]},
+{node:'06_Mast',n:'Tiang antena',z:'天线平台',y:[0,200,0]},
+{node:'05_Capsule',n:'Kapsul',z:'太空舱观光层',y:[0,125,0]},
+{node:'04_UpperPearl',n:'Bola atas',z:'上球体',y:[0,70,0]},
+{node:'03_Columns',n:'Tiang & inti',z:'斜撑柱 · 核心筒',y:[115,45,0]},
+{node:'02_LowerPearl',n:'Bola bawah',z:'下球体',y:[0,25,0]},
+{node:'01_Plaza',n:'Plaza',z:'基座平台',y:[0,0,0]}];
+function cls(mn,pl){
+  if(pl){
+    if(/Visitor/.test(mn))return'visit';
+    if(/Broadleaf|Tree bark|Groundcover|Planting soil|hedges/.test(mn))return'park';
+    if(/Basalt|Granite|asphalt|Road|Silver-grey aluminium|Bench/.test(mn))return'paving';
+  }
+  if(/radome/.test(mn))return'radome';
+  if(/Night|architectural light|service light|LED/.test(mn))return'lights';
+  if(/glass|glazing/i.test(mn))return'glass';
+  if(/Concrete|Interior shadow/.test(mn))return'core';
+  if(/mullion|gasket|lattice|bolt|splice|feeder|satin aluminium|galvanized|insulator|signage/i.test(mn))return'frame';
+  return'skin';
+}
+
+/* Selalu mulai dari siang */
+let sel=null,hov=null,night=false,tk=0,k=0,prevS=1,ready=false,sd=3;
+let nk=0,nt=0,nS=0;
+const parts=[];
+const L=(a,b,t)=>a+(b-a)*t;
+
+/* renderer & scene */
+let R;try{R=new THREE.WebGLRenderer({canvas:$('#c'),antialias:true,alpha:true,powerPreference:'high-performance'})}catch(e){$('#lt').textContent='Browser ini tidak mendukung WebGL.';throw e}
+const PRMAX=MOB?1.25:1.75;let pr=Math.min(devicePixelRatio,PRMAX);
+R.setPixelRatio(pr);
+R.toneMapping=THREE.ACESFilmicToneMapping;
+R.shadowMap.enabled=true;R.shadowMap.type=MOB?THREE.PCFShadowMap:THREE.PCFSoftShadowMap;R.shadowMap.autoUpdate=false;
+const S=new THREE.Scene();
+S.environment=new THREE.PMREMGenerator(R).fromScene(new RoomEnvironment(),.04).texture;
+
+/* matahari: directional light + shadow map */
+const sun=new THREE.DirectionalLight(0xfff1e0,3);
+sun.castShadow=true;
+const SM=(!MOB&&R.capabilities.maxTextureSize>=4096)?4096:2048;sun.shadow.mapSize.set(SM,SM);
+const sc=sun.shadow.camera;sc.left=-620;sc.right=620;sc.top=620;sc.bottom=-620;sc.near=10;sc.far=3400;
+sun.shadow.bias=-.0004;sun.shadow.normalBias=1.2;sun.shadow.radius=3;
+sun.target.position.set(0,250,0);S.add(sun,sun.target);
+const fill=new THREE.DirectionalLight(0xffb6d9,.5);fill.position.set(-600,300,-500);S.add(fill);
+function setSun(){
+  const az=+$('#az').value*Math.PI/180,el=+$('#el').value*Math.PI/180;
+  sun.position.set(Math.sin(az)*Math.cos(el),Math.sin(el),Math.cos(az)*Math.cos(el)).multiplyScalar(1500).add(sun.target.position);
+  sd=3;
+}
+$('#az').oninput=setSun;$('#el').oninput=setSun;setSun();
+const gnd=new THREE.Mesh(new THREE.PlaneGeometry(5000,5000),new THREE.ShadowMaterial({opacity:.32}));
+gnd.rotation.x=-Math.PI/2;gnd.receiveShadow=true;S.add(gnd);
+
+const cam=new THREE.PerspectiveCamera(35,1,2,9000);
+const ctl=new OrbitControls(cam,R.domElement);
+ctl.target.set(0,210,0);cam.position.set(560,410,830);
+ctl.enableDamping=true;ctl.enablePan=false;ctl.minDistance=80;ctl.maxDistance=3500;ctl.maxPolarAngle=1.62;ctl.autoRotate=!RM;ctl.autoRotateSpeed=.5;
+let rt;ctl.addEventListener('start',()=>{ctl.autoRotate=false;clearTimeout(rt)});
+ctl.addEventListener('end',()=>{rt=setTimeout(()=>{ctl.autoRotate=!RM},4000)});
+function size(){R.setSize(innerWidth,innerHeight,false);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()}
+addEventListener('resize',size);size();
+
+/* muat model: unduhan sudah dimulai di <head>, decoder Draco dipanaskan paralel */
+const DRACO_SRC=['./draco/','https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/libs/draco/gltf/','https://www.gstatic.com/draco/versioned/decoders/1.5.6/'];
+let dracoIdx=0;
+const dl=new DRACOLoader().setDecoderPath(DRACO_SRC[0]);
+dl.preload();
+const gl=new GLTFLoader().setDRACOLoader(dl);
+const bar=f=>{$('#lb').style.width=Math.round(Math.min(1,f)*100)+'%'};
+function fail(e){
+  const file=location.protocol==='file:';
+  $('#lt').innerHTML=(file?'Halaman dibuka langsung dari file. Jalankan lewat server (misalnya <b>npx serve</b>) atau deploy ke Vercel.':'Berkas <b>oriental-pearl-tower.glb</b> tidak bisa dimuat. Pastikan ada di folder yang sama dengan index.html.')+'<br>Atau pilih berkasnya langsung:<br><label class="btn main">Pilih berkas .glb<input type="file" accept=".glb" hidden id="fi"></label>';
+  $('#lb').style.width='0';console.error(e);
+  $('#fi').onchange=async ev=>{const f=ev.target.files[0];if(f){$('#lt').textContent='Menyiapkan model…';parse(await f.arrayBuffer())}};
+}
+function parse(buf){
+  $('#lt').textContent='Menyiapkan model…';bar(.85);
+  gl.parse(buf,'./',
+    build,
+    err=>{
+      // coba decoder Draco berikutnya (lokal -> jsDelivr -> gstatic) sebelum menyerah
+      if(dracoIdx<DRACO_SRC.length-1){dracoIdx++;dl.setDecoderPath(DRACO_SRC[dracoIdx]);gl.setDRACOLoader(dl);parse(buf);return;}
+      fail(err);
+    });
+}
+(async()=>{
+  try{
+    if(_PB.stage)_PB.stage('Menyiapkan tampilan…');bar(.82);
+    const r=await window.__glb;if(!r)throw window.__glbErr||new Error('GLB tidak ditemukan');
+    let buf;
+    if(r._buffer){buf=new Uint8Array(r._buffer)}
+    else{
+      const total=+r.headers.get('content-length')||0;let got=0;const chunks=[];
+      const rd=r.body.getReader();
+      for(;;){const {done,value}=await rd.read();if(done)break;chunks.push(value);got+=value.length;bar(.05+.75*(total?got/total:Math.min(.98,got/17.6e6)))}
+      buf=new Uint8Array(got);let o=0;for(const c of chunks){buf.set(c,o);o+=c.length}
+    }
+    parse(buf.buffer);
+  }catch(e){fail(e)}
+})();
+
+const triOf=a=>a.reduce((s,m)=>s+(m.geometry.index?m.geometry.index.count:m.geometry.attributes.position.count)/3,0);
+function build(g){
+  const root=g.scene;S.add(root);
+  const top=root.children.slice();
+  SEG.forEach((seg,si)=>{
+    const node=top.find(n=>n.name===seg.node||n.name.indexOf(seg.node)===0);if(!node)return;
+    const pl=seg.node==='01_Plaza',B={},meshes=[];
+    node.traverse(o=>{if(o.isMesh)meshes.push(o)});
+    meshes.forEach(m=>{const l=cls(m.material.name||'',pl);(B[l]=B[l]||[]).push(m)});
+    Object.keys(B).forEach(l=>{
+      if(EXTRA.includes(l)||l==='frame'||!B[l]||triOf(B[l])>=150)return;
+      const to=B.frame?'frame':Object.keys(B).find(x=>x!==l&&!EXTRA.includes(x));
+      if(to){B[to]=B[to].concat(B[l]);delete B[l]}
+    });
+    Object.keys(LN).forEach(l=>{
+      if(!B[l])return;
+      const grp=new THREE.Group();S.add(grp);const names=new Set();
+      /* di HP, pohon dan figur tidak ikut membuat bayangan (hemat ratusan ribu segitiga) */
+      const cast=!(MOB&&(l==='park'||l==='visit'));
+      B[l].forEach(m=>{
+        names.add((m.material.name||'').replace(/^WEB \| /,''));
+        m.material=m.material.clone();
+        m.userData.e0=m.material.emissive.clone();m.userData.i0=m.material.emissiveIntensity;
+        m.castShadow=cast;m.receiveShadow=true;
+        m.updateMatrix();m.matrixAutoUpdate=false;
+        grp.add(m);
+      });
+      grp.updateMatrixWorld(true);
+      const box=new THREE.Box3().setFromObject(grp);
+      const ex=EXTRA.includes(l),k2=pl&&!ex?1.8:1;
+      const off=new THREE.Vector3(...seg.y).add(new THREE.Vector3(...LAY[l]).multiplyScalar(k2));
+      parts.push({i:parts.length,si,seg,l,grp,box,off,meshes:B[l],tri:triOf(B[l]),mats:names.size,h:box.max.y-box.min.y,
+        n:ex?LN[l]:`${seg.n} · ${LN[l]}`,z:ex?LZ[l]:seg.z,d:LD[l]});
+    });
+  });
+  root.removeFromParent();
+  const ls=$('#ls');let last=-1;
+  parts.forEach(p=>{
+    if(p.si!==last){last=p.si;const h=document.createElement('li');h.className='gh';h.innerHTML=`${p.seg.n} <span lang="zh">${p.seg.z}</span>`;ls.appendChild(h)}
+    const li=document.createElement('li'),b=document.createElement('button');b.dataset.i=p.i;
+    b.innerHTML=`<i>${pad(p.i+1)}</i><span>${p.n.split(' · ').pop()}<small lang="zh">${p.z}</small></span>`;
+    b.onclick=()=>select(sel===p.i?null:p.i);b.onmouseenter=()=>{hov=p.i;paint()};b.onmouseleave=()=>{hov=null;paint()};
+    li.appendChild(b);ls.appendChild(li);
+    const bd=document.createElement('button');bd.className='bd';bd.textContent=pad(p.i+1);bd.setAttribute('aria-label',p.n);
+    bd.onclick=()=>select(sel===p.i?null:p.i);document.body.appendChild(bd);p.badge=bd;
+  });
+  $('#hc').textContent=parts.length+' komponen';$('#hn').textContent=parts.length;
+  applyNight();select(null);sd=3;
+  $('#ld').classList.add('off');$('#bx').disabled=false;ready=true;
+}
+
+function paint(){parts.forEach(p=>{const on=p.i===sel||p.i===hov;p.meshes.forEach(m=>{const t=m.material,u=m.userData;
+  if(on){t.emissive.setHex(0x2bb8ff);t.emissiveIntensity=.35}
+  else{t.emissive.copy(u.e0);t.emissiveIntensity=u.i0*((u.e0.r+u.e0.g+u.e0.b)>0?L(.06,1,nS):1)}})})}
+function select(i){sel=i;
+  document.querySelectorAll('.r button').forEach(b=>b.classList.toggle('on',+b.dataset.i===i));
+  parts.forEach(p=>p.badge&&p.badge.classList.toggle('on',p.i===i));
+  const pn=$('#pn'),p=parts[i];
+  if(i===null||!p){pn.textContent='Seret untuk memutar, scroll untuk zoom. Klik nomor di model atau daftar komponen untuk melihat detailnya.'}
+  else{pn.innerHTML=`<b>${pad(i+1)} ${p.n}</b><span class="z" lang="zh">${p.z}</span><p>${p.d}</p><div class="st">${p.h.toFixed(0)} m · ${nf.format(Math.round(p.tri/1000))} rb segitiga · ${p.mats} material</div>`;
+    const el=document.querySelector(`.r button[data-i="${i}"]`);if(el&&innerWidth>900)el.scrollIntoView({block:'nearest'})}
+  paint()}
+
+/* transisi siang ↔ malam yang mulus */
+const C1=new THREE.Color(0xfff1e0),C2=new THREE.Color(0x8fa6ff);
+function applyNight(){
+  const t=nS=nk*nk*(3-2*nk);
+  R.toneMappingExposure=L(1,.9,t);S.environmentIntensity=L(.5,.12,t);
+  sun.intensity=L(3,.4,t);sun.color.copy(C1).lerp(C2,t);fill.intensity=L(.5,.2,t);
+  gnd.material.opacity=L(.32,.5,t);$('#nb').style.opacity=t;paint();
+}
+function mode(n){night=n;nt=n?1:0;document.documentElement.dataset.mode=n?'night':'day';
+  $('#bn').textContent=n?'Mode siang':'Mode malam';$('#bn').setAttribute('aria-pressed',n);
+  document.querySelector('meta[name=theme-color]').content=n?'#0b1030':'#dce6f4';
+  if(RM){nk=nt;applyNight()}}
+$('#bx').onclick=e=>{tk=tk?0:1;e.target.textContent=tk?'Satukan kembali':'Pisahkan komponen';e.target.setAttribute('aria-pressed',!!tk);if(RM)k=tk};
+$('#bn').onclick=()=>mode(!night);
+mode(false);
+
+/* pilih lewat klik di model (kotak pembatas, agar ringan) */
+let px=0,py=0;const ray=new THREE.Raycaster(),mv=new THREE.Vector2(),hv=new THREE.Vector3();
+R.domElement.addEventListener('pointerdown',e=>{px=e.clientX;py=e.clientY});
+R.domElement.addEventListener('pointerup',e=>{if(!ready||Math.hypot(e.clientX-px,e.clientY-py)>5)return;
+  mv.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);ray.setFromCamera(mv,cam);
+  let best=null,bd=1e9;parts.forEach(p=>{const b=p.box.clone().translate(p.grp.position);if(ray.ray.intersectBox(b,hv)){const d=hv.distanceTo(ray.ray.origin);if(d<bd){bd=d;best=p.i}}});
+  select(best===sel?null:best)});
+
+/* resolusi adaptif: turunkan otomatis kalau frame rate jatuh, naikkan lagi kalau lega */
+let ft=[],lastT=performance.now();
+function adapt(now){const dt=now-lastT;lastT=now;if(dt>250||!ready)return;ft.push(dt);
+  if(ft.length>=45){const a=ft.reduce((s,x)=>s+x,0)/ft.length;ft=[];
+    if(a>38&&pr>.75){pr=Math.max(.75,pr*.82);R.setPixelRatio(pr);size()}
+    else if(a<19&&pr<PRMAX){pr=Math.min(PRMAX,pr*1.1);R.setPixelRatio(pr);size()}}}
+
+const ease=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const v=new THREE.Vector3(),offv=new THREE.Vector3(),cen=new THREE.Vector3();
+let lt=performance.now();
+function tick(now){requestAnimationFrame(tick);
+  const dt=Math.min(now-lt,60);lt=now;
+  if(Math.abs(nt-nk)>.002){nk+=(nt-nk)*(1-Math.exp(-dt*3.2/1000));applyNight()}
+  else if(nk!==nt){nk=nt;applyNight()}
+  if(ready){
+    const moving=Math.abs(tk-k)>.0005;
+    k+=(tk-k)*.07;if(!moving)k=tk;const e=ease(k);
+    if(moving||sd>0){
+      parts.forEach(p=>p.grp.position.copy(p.off).multiplyScalar(e));
+      gnd.position.y=-.5-134.5*e;
+    }
+    if(moving)sd=3;
+    const s=1+.7*e;
+    if(s!==prevS){offv.copy(cam.position).sub(ctl.target).multiplyScalar(s/prevS);prevS=s;ctl.target.y=210+85*e;cam.position.copy(ctl.target).add(offv)}
+    ctl.update();
+    if(e>0||moving){
+      parts.forEach(p=>{const b=p.badge;p.box.getCenter(cen);
+        v.copy(cen).add(p.grp.position).project(cam);
+        const vis=e>.25&&v.z<1;b.style.opacity=vis?Math.min(1,(e-.25)*2):0;b.style.pointerEvents=vis&&e>.6?'auto':'none';
+        b.style.transform=`translate(${(v.x*.5+.5)*innerWidth}px,${(-v.y*.5+.5)*innerHeight}px)`});
+    }
+  }else ctl.update();
+  if(sd>0){R.shadowMap.needsUpdate=true;sd--}
+  R.render(S,cam);adapt(now)}
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
