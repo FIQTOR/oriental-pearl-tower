@@ -58,13 +58,21 @@
       if(x.done){var b=new Uint8Array(got),o=0;for(var i=0;i<chunks.length;i++){b.set(chunks[i],o);o+=chunks[i].length}return b.buffer}
       chunks.push(x.value);got+=x.value.length;if(onFrac)onFrac(got);return pump()})})();
   }
-  // CORE (9.7 MB) — top priority, progress 5%..85%
-  window.__core=fetch('./oriental-pearl-tower-core.glb').then(function(r){
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    var total=+r.headers.get('content-length')||0;
-    return readStream(r,function(got){var f=total?got/total:Math.min(.98,got/10.2e6);f=Math.min(1,f);
-      setp(.05+.80*f);stage('Downloading tower… '+Math.round(f*100)+'%  ('+(got/1048576).toFixed(1)+' MB'+(total?' / '+(total/1048576).toFixed(1)+' MB':'')+')')});
-  }).catch(function(e){window.__coreErr=e;return null});
+  // CORE (~9.7 MB) — top priority. Kept as a re-runnable function so <body> can retry it.
+  function grabCore(){
+    return fetch('./oriental-pearl-tower-core.glb',{cache:'default'}).then(function(r){
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      var total=+r.headers.get('content-length')||0;
+      return readStream(r,function(got){
+        // use real total when available; otherwise a soft estimate, never stuck above 85%
+        var f=total?got/total:Math.min(1,got/10.1e6);f=Math.max(0,Math.min(1,f));
+        setp(.05+.80*f);
+        stage('Downloading tower… '+Math.round(f*100)+'%  ('+(got/1048576).toFixed(1)+' MB'+(total?' / '+(total/1048576).toFixed(1)+' MB':'')+')');
+      });
+    }).catch(function(e){window.__coreErr=e;return null});
+  }
+  window.__grabCore=grabCore;
+  window.__core=grabCore();
 })();
 </script>
 <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js" crossorigin>
@@ -221,6 +229,14 @@ let sel=null,hov=null,night=false,tk=0,k=0,prevS=1,ready=false,sd=3;
 let nk=0,nt=0,nS=0;
 const parts=[];
 const L=(a,b,t)=>a+(b-a)*t;
+/* clear any partially-built geometry so a retry starts from a clean slate */
+function resetScene(){
+  parts.forEach(p=>{p.grp.removeFromParent();p.badge&&p.badge.remove()});
+  parts.length=0;
+  const ls=$('#ls');if(ls)ls.innerHTML='';
+  document.querySelectorAll('.bd').forEach(b=>b.remove());
+  sel=null;hov=null;tk=0;k=0;prevS=1;ready=false;
+}
 
 /* renderer & scene */
 let R;try{R=new THREE.WebGLRenderer({canvas:$('#c'),antialias:true,alpha:true,powerPreference:'high-performance'})}catch(e){$('#lt').textContent='This browser does not support WebGL.';throw e}
@@ -260,30 +276,58 @@ addEventListener('resize',size);size();
 /* load model: download already started in <head>, Draco decoder warmed up in parallel */
 const DRACO_SRC=['./draco/','https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/libs/draco/gltf/','https://www.gstatic.com/draco/versioned/decoders/1.5.6/'];
 let dracoIdx=0;
-const dl=new DRACOLoader().setDecoderPath(DRACO_SRC[0]);
-dl.preload();
-const gl=new GLTFLoader().setDRACOLoader(dl);
+let dl,gl;
+function newLoader(){
+  dl=new DRACOLoader().setDecoderPath(DRACO_SRC[dracoIdx]);
+  dl.preload();
+  gl=new GLTFLoader().setDRACOLoader(dl);
+  return gl;
+}
+newLoader();
 const bar=f=>{$('#lb').style.width=Math.round(Math.min(1,f)*100)+'%'};
-function fail(e){
+let finished=false,watchdog=0;
+function startWatchdog(){
+  clearTimeout(watchdog);
+  watchdog=setTimeout(function(){
+    if(finished)return;
+    showError('The model is taking too long to load. This can happen on a slow connection or an unstable cache — try again.');
+  },45000);
+}
+function showError(msg){
+  if(finished)return;
   const file=location.protocol==='file:';
-  $('#lt').innerHTML=(file?'This page was opened directly from a file. Serve it over HTTP (for example <b>npx serve</b>) or deploy to Vercel.':'The file <b>oriental-pearl-tower-core.glb</b> could not be loaded. Make sure it sits in the same folder as index.html.')+'<br>Or pick the file directly:<br><label class="btn main">Choose a .glb file<input type="file" accept=".glb" hidden id="fi"></label>';
-  $('#lb').style.width='0';console.error(e);
+  const head=file?'This page was opened directly from a file. Serve it over HTTP (for example <b>npx serve</b>) or deploy to Vercel.':msg;
+  $('#lt').innerHTML=head+'<br>You can retry, or pick the file directly:'+
+    '<div style="margin-top:14px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">'+
+    '<button class="btn main" id="rt">Retry</button>'+
+    '<label class="btn">Choose a .glb file<input type="file" accept=".glb" hidden id="fi"></label></div>';
+  $('#lb').style.width='0';clearTimeout(watchdog);
+  const rt=$('#rt');if(rt)rt.onclick=retry;
   $('#fi').onchange=async ev=>{const f=ev.target.files[0];if(f){$('#lt').textContent='Preparing model…';parse(await f.arrayBuffer())}};
+}
+function fail(e){console.error(e);showError('The file <b>oriental-pearl-tower-core.glb</b> could not be loaded. Make sure it sits in the same folder as index.html.')}
+function retry(){
+  $('#lt').textContent='Retrying…';$('#lb').style.width='0';finished=false;dracoIdx=0;newLoader();resetScene();
+  startWatchdog();
+  const g=window.__grabCore?window.__grabCore():null;
+  if(!g){fail(new Error('no fetch'));return}
+  g.then(buf=>{if(!buf)throw window.__coreErr||new Error('GLB not found');parse(buf)}).catch(fail);
 }
 const _PB=window.__prog||{};
 function parse(buf){
   $('#lt').textContent='Preparing model…';bar(.9);
   gl.parse(buf,'./',
-    build,
+    g=>{try{build(g)}catch(err){fail(err)}},
     err=>{
-      // coba decoder Draco berikutnya (lokal -> jsDelivr -> gstatic) sebelum menyerah
-      if(dracoIdx<DRACO_SRC.length-1){dracoIdx++;dl.setDecoderPath(DRACO_SRC[dracoIdx]);gl.setDRACOLoader(dl);parse(buf);return;}
+      // try the next Draco decoder (local -> jsDelivr -> gstatic) before giving up
+      if(dracoIdx<DRACO_SRC.length-1){dracoIdx++;newLoader();parse(buf);return;}
       fail(err);
     });
 }
 (async()=>{
   try{
     if(_PB.stage)_PB.stage('Preparing view…');bar(.85);
+    startWatchdog();
     const buf=await window.__core;if(!buf)throw window.__coreErr||new Error('GLB not found');
     parse(buf);
   }catch(e){fail(e)}
@@ -339,7 +383,7 @@ function build(g){
   });
   $('#hc').textContent=parts.length+' components';$('#hn').textContent=parts.length;
   applyNight();select(null);sd=3;
-  $('#ld').classList.add('off');$('#bx').disabled=false;ready=true;
+  $('#ld').classList.add('off');$('#bx').disabled=false;ready=true;finished=true;clearTimeout(watchdog);
   const tp=parts.find(x=>x.l==='park');
   if(tp&&tp.loading&&!(navigator.connection&&navigator.connection.saveData))setTimeout(loadTrees,MOB?2500:300);
   else if(tp&&tp.loading){tp.loading=false;tp.d+=' (skipped: data-saver mode)'}
