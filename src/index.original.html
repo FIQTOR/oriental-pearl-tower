@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Oriental Pearl Tower 3D · 东方明珠 Shanghai | Model Interaktif oleh FIQTOR</title>
-<meta name="description" content="Jelajahi Menara Mutiara Oriental (东方明珠) Shanghai dalam 3D interaktif. Putar, zoom, bongkar puluhan komponen strukturnya, atur arah matahari, dan lihat versi malamnya.">
-<meta name="keywords" content="Oriental Pearl Tower, 东方明珠, Menara Mutiara Oriental, Shanghai, model 3D, three.js, menara Shanghai, FIQTOR">
+<title>Oriental Pearl Tower 3D · 东方明珠 Shanghai | Interactive Model by FIQTOR</title>
+<meta name="description" content="Explore Shanghai's Oriental Pearl Tower (东方明珠) in interactive 3D. Orbit, zoom, explode its structural components, move the sun, and switch to night mode.">
+<meta name="keywords" content="Oriental Pearl Tower, 东方明珠, Shanghai, 3D model, three.js, Shanghai tower, FIQTOR">
 <meta name="author" content="FIQTOR">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#dce6f4">
@@ -17,21 +17,21 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Oriental Pearl Tower 3D">
-<meta property="og:locale" content="id_ID">
+<meta property="og:locale" content="en_US">
 <meta property="og:title" content="Oriental Pearl Tower 3D · 东方明珠 Shanghai">
-<meta property="og:description" content="Model 3D interaktif Menara Mutiara Oriental. Putar, zoom, dan bongkar komponennya.">
+<meta property="og:description" content="Interactive 3D model of the Oriental Pearl Tower. Orbit, zoom, and explode its components.">
 <meta property="og:url" content="https://oriental-pearl-tower.vercel.app/">
 <meta property="og:image" content="https://oriental-pearl-tower.vercel.app/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Ilustrasi Menara Mutiara Oriental Shanghai dengan dua bola merah muda di langit senja">
+<meta property="og:image:alt" content="Illustration of Shanghai's Oriental Pearl Tower with two pink spheres against a dusk sky">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Oriental Pearl Tower 3D · 东方明珠 Shanghai">
-<meta name="twitter:description" content="Model 3D interaktif Menara Mutiara Oriental. Putar, zoom, dan bongkar komponennya.">
+<meta name="twitter:description" content="Interactive 3D model of the Oriental Pearl Tower. Orbit, zoom, and explode its components.">
 <meta name="twitter:image" content="https://oriental-pearl-tower.vercel.app/og-image.png">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[
-{"@type":"WebSite","@id":"https://oriental-pearl-tower.vercel.app/#site","url":"https://oriental-pearl-tower.vercel.app/","name":"Oriental Pearl Tower 3D","inLanguage":"id","publisher":{"@id":"https://oriental-pearl-tower.vercel.app/#org"}},
-{"@type":"WebPage","url":"https://oriental-pearl-tower.vercel.app/","name":"Oriental Pearl Tower 3D · 东方明珠 Shanghai","description":"Model 3D interaktif Menara Mutiara Oriental, Shanghai.","inLanguage":"id","isPartOf":{"@id":"https://oriental-pearl-tower.vercel.app/#site"},"primaryImageOfPage":"https://oriental-pearl-tower.vercel.app/og-image.png","about":{"@type":"Place","name":"Oriental Pearl Radio & TV Tower","address":{"@type":"PostalAddress","addressLocality":"Pudong, Shanghai","addressCountry":"CN"}}},
+{"@type":"WebSite","@id":"https://oriental-pearl-tower.vercel.app/#site","url":"https://oriental-pearl-tower.vercel.app/","name":"Oriental Pearl Tower 3D","inLanguage":"en","publisher":{"@id":"https://oriental-pearl-tower.vercel.app/#org"}},
+{"@type":"WebPage","url":"https://oriental-pearl-tower.vercel.app/","name":"Oriental Pearl Tower 3D · 东方明珠 Shanghai","description":"Interactive 3D model of Shanghai's Oriental Pearl Tower.","inLanguage":"en","isPartOf":{"@id":"https://oriental-pearl-tower.vercel.app/#site"},"primaryImageOfPage":"https://oriental-pearl-tower.vercel.app/og-image.png","about":{"@type":"Place","name":"Oriental Pearl Radio & TV Tower","address":{"@type":"PostalAddress","addressLocality":"Pudong, Shanghai","addressCountry":"CN"}}},
 {"@type":"Organization","@id":"https://oriental-pearl-tower.vercel.app/#org","name":"FIQTOR"}]}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,11 +39,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&text=%E4%B8%9C%E6%96%B9%E6%98%8E%E7%8F%A0&display=swap" rel="stylesheet">
 <script>
-/* Unduh core GLB sedini mungkin, paralel dengan three.js, dan hitung progres byte
-   NYATA di sini (sebelum three.js selesai) supaya bar bergerak dari detik pertama.
-   #lt/#lb belum ada saat script ini jalan, jadi update ditunda ke DOMContentLoaded. */
+/* Fetch the core GLB as early as possible, in parallel with three.js, and compute REAL
+   byte progress right here (before three.js finishes) so the bar starts moving instantly.
+   #lt/#lb don't exist yet when this script runs, so updates are deferred to DOMContentLoaded. */
 (function(){
-  var lastPct=0,lastMsg='Menghubungkan…',domReady=false;
+  var lastPct=0,lastMsg='Connecting…',domReady=false;
   function apply(){if(!domReady)return;var lt=document.getElementById('lt'),lb=document.getElementById('lb');
     if(lt&&lastMsg)lt.textContent=lastMsg;if(lb)lb.style.width=Math.round(Math.max(0,Math.min(1,lastPct))*100)+'%'}
   function stage(s){lastMsg=s;apply()}
@@ -58,12 +58,12 @@
       if(x.done){var b=new Uint8Array(got),o=0;for(var i=0;i<chunks.length;i++){b.set(chunks[i],o);o+=chunks[i].length}return b.buffer}
       chunks.push(x.value);got+=x.value.length;if(onFrac)onFrac(got);return pump()})})();
   }
-  // CORE (9.7 MB) — prioritas utama, progress 5%..85%
+  // CORE (9.7 MB) — top priority, progress 5%..85%
   window.__core=fetch('./oriental-pearl-tower-core.glb').then(function(r){
     if(!r.ok)throw new Error('HTTP '+r.status);
     var total=+r.headers.get('content-length')||0;
     return readStream(r,function(got){var f=total?got/total:Math.min(.98,got/10.2e6);f=Math.min(1,f);
-      setp(.05+.80*f);stage('Mengunduh menara… '+Math.round(f*100)+'%  ('+(got/1048576).toFixed(1)+' MB'+(total?' / '+(total/1048576).toFixed(1)+' MB':'')+')')});
+      setp(.05+.80*f);stage('Downloading tower… '+Math.round(f*100)+'%  ('+(got/1048576).toFixed(1)+' MB'+(total?' / '+(total/1048576).toFixed(1)+' MB':'')+')')});
   }).catch(function(e){window.__coreErr=e;return null});
 })();
 </script>
@@ -143,29 +143,29 @@ h1{font-size:clamp(22px,2.6vw,34px);line-height:1.15;margin:14px 0 10px;font-wei
 </head>
 <body>
 <div id="nb" aria-hidden="true"></div>
-<canvas id="c" role="img" aria-label="Model 3D interaktif Menara Mutiara Oriental, Shanghai"></canvas>
+<canvas id="c" role="img" aria-label="Interactive 3D model of the Oriental Pearl Tower, Shanghai"></canvas>
 <main class="ui">
   <header class="hd">
     <p class="zh" lang="zh">东方明珠</p>
-    <h1>Menara Mutiara Oriental, Shanghai</h1>
-    <p>Model 468 m dengan detail panel kaca, rangka, dan pencahayaan. Seret untuk memutar, lalu bongkar menjadi <span id="hn">banyak</span> komponen dan satukan lagi.</p>
+    <h1>Oriental Pearl Tower, Shanghai</h1>
+    <p>A 468 m model with detailed glass panels, lattice, and lighting. Drag to orbit, then explode it into <span id="hn">many</span> components and reassemble.</p>
   </header>
   <div class="ctl">
-    <button class="btn main" id="bx" aria-pressed="false" disabled>Pisahkan komponen</button>
-    <button class="btn" id="bn" aria-pressed="false">Mode malam</button>
-    <div class="sl"><label>Arah matahari<input type="range" id="az" min="0" max="360" value="40"></label><label>Ketinggian matahari<input type="range" id="el" min="10" max="80" value="48"></label></div>
+    <button class="btn main" id="bx" aria-pressed="false" disabled>Explode components</button>
+    <button class="btn" id="bn" aria-pressed="false">Night mode</button>
+    <div class="sl"><label>Sun azimuth<input type="range" id="az" min="0" max="360" value="40"></label><label>Sun elevation<input type="range" id="el" min="10" max="80" value="48"></label></div>
   </div>
   <div class="pn" id="pn" aria-live="polite"></div>
-  <nav class="r" aria-label="Daftar komponen"><h2 id="hc">Komponen</h2><ul id="ls"></ul></nav>
+  <nav class="r" aria-label="Component list"><h2 id="hc">Components</h2><ul id="ls"></ul></nav>
 </main>
 <footer class="ft">© 2026 Oriental Pearl Tower 3D · Designed &amp; built by <b>FIQTOR</b> · All rights reserved</footer>
-<div id="ld"><div><p id="lt">Memuat model 3D…</p><div class="bar"><i id="lb"></i></div></div></div>
+<div id="ld"><div><p id="lt">Loading 3D model…</p><div class="bar"><i id="lb"></i></div></div></div>
 <section class="sr">
-  <h2>Oriental Pearl Tower (东方明珠), menara ikonik Shanghai</h2>
-  <p>Menara Radio dan TV Mutiara Oriental berdiri di distrik Pudong, Shanghai, dengan tinggi 468 meter. Menara ini dikenal lewat bola-bola merah muda yang ditopang tiga tiang miring. Halaman ini menampilkan model 3D interaktifnya: putar dan zoom model, bongkar komponen seperti antena, kapsul, bola atas, tiang dan inti, bola bawah, serta plaza, atur arah matahari, dan lihat tampilan malam hari.</p>
-  <p>Dibuat oleh FIQTOR.</p>
+  <h2>Oriental Pearl Tower (东方明珠), Shanghai's iconic tower</h2>
+  <p>The Oriental Pearl Radio and TV Tower stands in Pudong, Shanghai, and rises 468 meters. It is famous for its pink spheres supported by three slanted columns. This page shows an interactive 3D model of it: orbit and zoom the model, explode components such as the antenna, capsule, upper sphere, columns and core, lower sphere, and plaza, adjust the sun direction, and view the night mode.</p>
+  <p>Built by FIQTOR.</p>
 </section>
-<noscript><p style="position:fixed;inset:0;display:grid;place-items:center;background:#f2f6fc;color:#12203a;margin:0;padding:24px;text-align:center;z-index:9">Halaman ini membutuhkan JavaScript untuk menampilkan model 3D Menara Mutiara Oriental.</p></noscript>
+<noscript><p style="position:fixed;inset:0;display:grid;place-items:center;background:#f2f6fc;color:#12203a;margin:0;padding:24px;text-align:center;z-index:9">This page requires JavaScript to display the 3D model of the Oriental Pearl Tower.</p></noscript>
 
 <script type="module">
 import * as THREE from 'three';
@@ -177,30 +177,30 @@ import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 const $=s=>document.querySelector(s),pad=n=>String(n).padStart(2,'0');
 const RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 const MOB=matchMedia('(pointer:coarse)').matches||innerWidth<=900;
-const nf=new Intl.NumberFormat('id-ID');
+const nf=new Intl.NumberFormat('en-US');
 
-/* Lapisan tiap segmen: dipisah lewat nama material di file GLB */
-const LN={frame:'rangka',skin:'kulit panel',glass:'kaca',lights:'lampu',core:'inti & beton',radome:'radome antena',visit:'pengunjung',park:'taman & pohon',paving:'jalan & paving'};
+/* Layer of each segment: split by material name in the GLB file */
+const LN={frame:'frame',skin:'cladding',glass:'glass',lights:'lights',core:'core & concrete',radome:'antenna radome',visit:'visitors',park:'park & trees',paving:'roads & paving'};
 const LZ={frame:'钢结构',skin:'外立面',glass:'玻璃',lights:'灯光',core:'核心筒',radome:'天线罩',visit:'游客',park:'景观绿化',paving:'广场铺装'};
 const LD={
-frame:'Rangka baja nirkarat, gasket, dan sambungan yang menahan seluruh kulit bangunan.',
-skin:'Panel kulit luar: porselen putih, aluminium, enamel magenta, dan sambungan panel.',
-glass:'Kaca tirai dan kaca pandang. Pada bola, kacanya berwarna merah muda.',
-lights:'Lampu arsitektural. Menyala terang di mode malam.',
-core:'Beton pracetak dan lapisan bayangan interior di dalam struktur.',
-radome:'Penutup antena berwarna pucat.',
-visit:'Figur pengunjung kecil di plaza sebagai penanda skala.',
-park:'Pohon berdaun lebar, semak pangkas, penutup tanah, dan tanah tanam di sekitar plaza.',
-paving:'Aspal jalan, paving granit dan basal, bangku kayu, serta tepian aluminium yang mengelilingi plaza.'};
+frame:'Stainless steel frame, gaskets, and joints that hold the entire building envelope.',
+skin:'Outer cladding panels: white porcelain, aluminium, magenta enamel, and panel joints.',
+glass:'Curtain wall and viewing glass. On the spheres, the glass is pink.',
+lights:'Architectural lighting. Glows brightly in night mode.',
+core:'Precast concrete and interior shadow layers inside the structure.',
+radome:'Pale-coloured antenna radome.',
+visit:'Small visitor figures on the plaza as a scale reference.',
+park:'Broadleaf trees, clipped hedges, groundcover, and planting soil around the plaza.',
+paving:'Road asphalt, granite and basalt paving, wooden benches, and the aluminium edging around the plaza.'};
 const LAY={frame:[0,0,0],skin:[-95,0,0],glass:[95,0,0],lights:[0,0,100],core:[0,0,-100],radome:[-55,0,-55],visit:[0,-45,0],park:[0,-85,0],paving:[0,-125,0]};
 const EXTRA=['visit','park','paving'];
 const SEG=[
-{node:'07_OpenAntenna',n:'Antena terbuka',z:'天线桅杆',y:[0,260,0]},
-{node:'06_Mast',n:'Tiang antena',z:'天线平台',y:[0,200,0]},
-{node:'05_Capsule',n:'Kapsul',z:'太空舱观光层',y:[0,125,0]},
-{node:'04_UpperPearl',n:'Bola atas',z:'上球体',y:[0,70,0]},
-{node:'03_Columns',n:'Tiang & inti',z:'斜撑柱 · 核心筒',y:[115,45,0]},
-{node:'02_LowerPearl',n:'Bola bawah',z:'下球体',y:[0,25,0]},
+{node:'07_OpenAntenna',n:'Open antenna',z:'天线桅杆',y:[0,260,0]},
+{node:'06_Mast',n:'Antenna mast',z:'天线平台',y:[0,200,0]},
+{node:'05_Capsule',n:'Capsule',z:'太空舱观光层',y:[0,125,0]},
+{node:'04_UpperPearl',n:'Upper sphere',z:'上球体',y:[0,70,0]},
+{node:'03_Columns',n:'Columns & core',z:'斜撑柱 · 核心筒',y:[115,45,0]},
+{node:'02_LowerPearl',n:'Lower sphere',z:'下球体',y:[0,25,0]},
 {node:'01_Plaza',n:'Plaza',z:'基座平台',y:[0,0,0]}];
 function cls(mn,pl){
   if(pl){
@@ -216,14 +216,14 @@ function cls(mn,pl){
   return'skin';
 }
 
-/* Selalu mulai dari siang */
+/* Always start in daytime */
 let sel=null,hov=null,night=false,tk=0,k=0,prevS=1,ready=false,sd=3;
 let nk=0,nt=0,nS=0;
 const parts=[];
 const L=(a,b,t)=>a+(b-a)*t;
 
 /* renderer & scene */
-let R;try{R=new THREE.WebGLRenderer({canvas:$('#c'),antialias:true,alpha:true,powerPreference:'high-performance'})}catch(e){$('#lt').textContent='Browser ini tidak mendukung WebGL.';throw e}
+let R;try{R=new THREE.WebGLRenderer({canvas:$('#c'),antialias:true,alpha:true,powerPreference:'high-performance'})}catch(e){$('#lt').textContent='This browser does not support WebGL.';throw e}
 const PRMAX=MOB?1.25:1.75;let pr=Math.min(devicePixelRatio,PRMAX);
 R.setPixelRatio(pr);
 R.toneMapping=THREE.ACESFilmicToneMapping;
@@ -231,7 +231,7 @@ R.shadowMap.enabled=true;R.shadowMap.type=MOB?THREE.PCFShadowMap:THREE.PCFSoftSh
 const S=new THREE.Scene();
 S.environment=new THREE.PMREMGenerator(R).fromScene(new RoomEnvironment(),.04).texture;
 
-/* matahari: directional light + shadow map */
+/* sun: directional light + shadow map */
 const sun=new THREE.DirectionalLight(0xfff1e0,3);
 sun.castShadow=true;
 const SM=(!MOB&&R.capabilities.maxTextureSize>=4096)?4096:2048;sun.shadow.mapSize.set(SM,SM);
@@ -257,7 +257,7 @@ ctl.addEventListener('end',()=>{rt=setTimeout(()=>{ctl.autoRotate=!RM},4000)});
 function size(){R.setSize(innerWidth,innerHeight,false);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()}
 addEventListener('resize',size);size();
 
-/* muat model: unduhan sudah dimulai di <head>, decoder Draco dipanaskan paralel */
+/* load model: download already started in <head>, Draco decoder warmed up in parallel */
 const DRACO_SRC=['./draco/','https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/libs/draco/gltf/','https://www.gstatic.com/draco/versioned/decoders/1.5.6/'];
 let dracoIdx=0;
 const dl=new DRACOLoader().setDecoderPath(DRACO_SRC[0]);
@@ -266,13 +266,13 @@ const gl=new GLTFLoader().setDRACOLoader(dl);
 const bar=f=>{$('#lb').style.width=Math.round(Math.min(1,f)*100)+'%'};
 function fail(e){
   const file=location.protocol==='file:';
-  $('#lt').innerHTML=(file?'Halaman dibuka langsung dari file. Jalankan lewat server (misalnya <b>npx serve</b>) atau deploy ke Vercel.':'Berkas <b>oriental-pearl-tower-core.glb</b> tidak bisa dimuat. Pastikan ada di folder yang sama dengan index.html.')+'<br>Atau pilih berkasnya langsung:<br><label class="btn main">Pilih berkas .glb<input type="file" accept=".glb" hidden id="fi"></label>';
+  $('#lt').innerHTML=(file?'This page was opened directly from a file. Serve it over HTTP (for example <b>npx serve</b>) or deploy to Vercel.':'The file <b>oriental-pearl-tower-core.glb</b> could not be loaded. Make sure it sits in the same folder as index.html.')+'<br>Or pick the file directly:<br><label class="btn main">Choose a .glb file<input type="file" accept=".glb" hidden id="fi"></label>';
   $('#lb').style.width='0';console.error(e);
-  $('#fi').onchange=async ev=>{const f=ev.target.files[0];if(f){$('#lt').textContent='Menyiapkan model…';parse(await f.arrayBuffer())}};
+  $('#fi').onchange=async ev=>{const f=ev.target.files[0];if(f){$('#lt').textContent='Preparing model…';parse(await f.arrayBuffer())}};
 }
 const _PB=window.__prog||{};
 function parse(buf){
-  $('#lt').textContent='Menyiapkan model…';bar(.9);
+  $('#lt').textContent='Preparing model…';bar(.9);
   gl.parse(buf,'./',
     build,
     err=>{
@@ -283,8 +283,8 @@ function parse(buf){
 }
 (async()=>{
   try{
-    if(_PB.stage)_PB.stage('Menyiapkan tampilan…');bar(.85);
-    const buf=await window.__core;if(!buf)throw window.__coreErr||new Error('GLB tidak ditemukan');
+    if(_PB.stage)_PB.stage('Preparing view…');bar(.85);
+    const buf=await window.__core;if(!buf)throw window.__coreErr||new Error('GLB not found');
     parse(buf);
   }catch(e){fail(e)}
 })();
@@ -298,7 +298,7 @@ function build(g){
     const pl=seg.node==='01_Plaza',B={},meshes=[];
     node.traverse(o=>{if(o.isMesh)meshes.push(o)});
     meshes.forEach(m=>{const l=cls(m.material.name||'',pl);(B[l]=B[l]||[]).push(m)});
-    if(pl&&!B.park)B.park=[]; /* slot pohon dipesan; isinya dimuat belakangan */
+    if(pl&&!B.park)B.park=[]; /* reserve the tree slot; its content is loaded later */
     Object.keys(B).forEach(l=>{
       if(EXTRA.includes(l)||l==='frame'||!B[l]||triOf(B[l])>=150)return;
       const to=B.frame?'frame':Object.keys(B).find(x=>x!==l&&!EXTRA.includes(x));
@@ -307,7 +307,7 @@ function build(g){
     Object.keys(LN).forEach(l=>{
       if(!B[l])return;
       const grp=new THREE.Group();S.add(grp);const names=new Set();
-      /* di HP, pohon dan figur tidak ikut membuat bayangan (hemat ratusan ribu segitiga) */
+      /* on mobile, trees and figures do not cast shadows (saves hundreds of thousands of triangles) */
       const cast=!(MOB&&(l==='park'||l==='visit'));
       B[l].forEach(m=>{
         names.add((m.material.name||'').replace(/^WEB \| /,''));
@@ -337,15 +337,15 @@ function build(g){
     const bd=document.createElement('button');bd.className='bd';bd.textContent=pad(p.i+1);bd.setAttribute('aria-label',p.n);
     bd.onclick=()=>select(sel===p.i?null:p.i);document.body.appendChild(bd);p.badge=bd;
   });
-  $('#hc').textContent=parts.length+' komponen';$('#hn').textContent=parts.length;
+  $('#hc').textContent=parts.length+' components';$('#hn').textContent=parts.length;
   applyNight();select(null);sd=3;
   $('#ld').classList.add('off');$('#bx').disabled=false;ready=true;
   const tp=parts.find(x=>x.l==='park');
   if(tp&&tp.loading&&!(navigator.connection&&navigator.connection.saveData))setTimeout(loadTrees,MOB?2500:300);
-  else if(tp&&tp.loading){tp.loading=false;tp.d+=' (dilewati: mode hemat data)'}
+  else if(tp&&tp.loading){tp.loading=false;tp.d+=' (skipped: data-saver mode)'}
 }
 
-/* pohon (6,7 MB) dimuat belakangan supaya menara tampil lebih cepat */
+/* trees (6.7 MB) load later so the tower appears sooner */
 function fillTrees(g){
   const p=parts.find(x=>x.l==='park');if(!p)return;
   const ms=[],names=new Set();g.scene.traverse(o=>{if(o.isMesh)ms.push(o)});
@@ -361,7 +361,7 @@ function loadTrees(){
   const p=parts.find(x=>x.l==='park');
   fetch('./oriental-pearl-tower-trees.glb').then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.arrayBuffer()})
     .then(b=>gl.parse(b,'./',fillTrees,fb)).catch(fb);
-  function fb(e){console.warn(e);if(p){p.loading=false;p.d+=' (gagal dimuat)'}}
+  function fb(e){console.warn(e);if(p){p.loading=false;p.d+=' (failed to load)'}}
 }
 
 function paint(){parts.forEach(p=>{const on=p.i===sel||p.i===hov;p.meshes.forEach(m=>{const t=m.material,u=m.userData;
@@ -371,12 +371,12 @@ function select(i){sel=i;
   document.querySelectorAll('.r button').forEach(b=>b.classList.toggle('on',+b.dataset.i===i));
   parts.forEach(p=>p.badge&&p.badge.classList.toggle('on',p.i===i));
   const pn=$('#pn'),p=parts[i];
-  if(i===null||!p){pn.textContent='Seret untuk memutar, scroll untuk zoom. Klik nomor di model atau daftar komponen untuk melihat detailnya.'}
-  else{pn.innerHTML=`<b>${pad(i+1)} ${p.n}</b><span class="z" lang="zh">${p.z}</span><p>${p.d}</p><div class="st">${p.loading?'Sedang dimuat di latar belakang…':`${p.h.toFixed(0)} m · ${nf.format(Math.round(p.tri/1000))} rb segitiga · ${p.mats} material`}</div>`;
+  if(i===null||!p){pn.textContent='Drag to orbit, scroll to zoom. Click a number on the model or in the component list to see its details.'}
+  else{pn.innerHTML=`<b>${pad(i+1)} ${p.n}</b><span class="z" lang="zh">${p.z}</span><p>${p.d}</p><div class="st">${p.loading?'Loading in the background…':`${p.h.toFixed(0)} m · ${nf.format(Math.round(p.tri/1000))}k triangles · ${p.mats} materials`}</div>`;
     const el=document.querySelector(`.r button[data-i="${i}"]`);if(el&&innerWidth>900)el.scrollIntoView({block:'nearest'})}
   paint()}
 
-/* transisi siang ↔ malam yang mulus */
+/* smooth day ↔ night transition */
 const C1=new THREE.Color(0xfff1e0),C2=new THREE.Color(0x8fa6ff);
 function applyNight(){
   const t=nS=nk*nk*(3-2*nk);
@@ -385,14 +385,14 @@ function applyNight(){
   gnd.material.opacity=L(.32,.5,t);$('#nb').style.opacity=t;paint();
 }
 function mode(n){night=n;nt=n?1:0;document.documentElement.dataset.mode=n?'night':'day';
-  $('#bn').textContent=n?'Mode siang':'Mode malam';$('#bn').setAttribute('aria-pressed',n);
+  $('#bn').textContent=n?'Day mode':'Night mode';$('#bn').setAttribute('aria-pressed',n);
   document.querySelector('meta[name=theme-color]').content=n?'#0b1030':'#dce6f4';
   if(RM){nk=nt;applyNight()}}
-$('#bx').onclick=e=>{tk=tk?0:1;e.target.textContent=tk?'Satukan kembali':'Pisahkan komponen';e.target.setAttribute('aria-pressed',!!tk);if(RM)k=tk};
+$('#bx').onclick=e=>{tk=tk?0:1;e.target.textContent=tk?'Reassemble':'Explode components';e.target.setAttribute('aria-pressed',!!tk);if(RM)k=tk};
 $('#bn').onclick=()=>mode(!night);
 mode(false);
 
-/* pilih lewat klik di model (kotak pembatas, agar ringan) */
+/* pick by clicking the model (bounding boxes, to stay light) */
 let px=0,py=0;const ray=new THREE.Raycaster(),mv=new THREE.Vector2(),hv=new THREE.Vector3();
 R.domElement.addEventListener('pointerdown',e=>{px=e.clientX;py=e.clientY});
 R.domElement.addEventListener('pointerup',e=>{if(!ready||Math.hypot(e.clientX-px,e.clientY-py)>5)return;
@@ -400,7 +400,7 @@ R.domElement.addEventListener('pointerup',e=>{if(!ready||Math.hypot(e.clientX-px
   let best=null,bd=1e9;parts.forEach(p=>{const b=p.box.clone().translate(p.grp.position);if(ray.ray.intersectBox(b,hv)){const d=hv.distanceTo(ray.ray.origin);if(d<bd){bd=d;best=p.i}}});
   select(best===sel?null:best)});
 
-/* resolusi adaptif: turunkan otomatis kalau frame rate jatuh, naikkan lagi kalau lega */
+/* adaptive resolution: drop automatically when frame rate falls, raise it when there is headroom */
 let ft=[],lastT=performance.now();
 function adapt(now){const dt=now-lastT;lastT=now;if(dt>250||!ready)return;ft.push(dt);
   if(ft.length>=45){const a=ft.reduce((s,x)=>s+x,0)/ft.length;ft=[];
@@ -435,21 +435,21 @@ function tick(now){requestAnimationFrame(tick);
   if(sd>0){R.shadowMap.needsUpdate=true;sd--}
   R.render(S,cam);adapt(now)}
 requestAnimationFrame(tick);
-/* anti-copy tambahan: blok print/simpan, drag, pilih-elemen lewat drag, dan pintasan devtools lain */
+/* extra anti-copy: block print/save, drag, drag-select, and other devtools shortcuts */
 (function(){
   var stop=function(e){if(e&&e.preventDefault)e.preventDefault();if(e)e.returnValue=false;return false};
   try{
-    // cegah simpan halaman / print (Ctrl+S, Ctrl+P, Ctrl+Shift+P)
+    // prevent saving the page / printing (Ctrl+S, Ctrl+P, Ctrl+Shift+P)
     addEventListener('keydown',function(e){
       var k=(e.key||'').toLowerCase();
       if((e.ctrlKey||e.metaKey)&&(k==='s'||k==='p'))return stop(e);
       if(e.ctrlKey&&e.shiftKey&&k==='p')return stop(e);
       if(e.ctrlKey&&e.shiftKey&&['e','h','m','w','y'].indexOf(k)>-1)return stop(e);
     },true);
-    // cegah drag-save pada canvas/gambar
+    // prevent drag-save on the canvas/images
     document.addEventListener('dragstart',stop,true);
     document.addEventListener('selectstart',function(e){var t=e.target;if(t&&(t.id==='c'||t.tagName==='CANVAS'))return stop(e)},true);
-    // cegah tarik-lepas tautan
+    // prevent dropping links
     addEventListener('drop',stop,true);
   }catch(e){}
 })();

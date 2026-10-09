@@ -8,12 +8,12 @@ A real-time, interactive 3D explorer for the **Oriental Pearl Tower (东方明�
 
 ## ✨ Features
 
-- **Automatic GLB loading** — the model (`oriental-pearl-tower.glb`) is fetched on load, with a **Robust multi-stage fallback**: local Draco decoder → jsDelivr → gstatic → one retry → manual file picker. It no longer silently fails.
+- **Automatic GLB loading** — the model (`oriental-pearl-tower-core.glb`) is fetched on load, with a **Robust multi-stage fallback**: local Draco decoder → jsDelivr → gstatic → one retry → manual file picker. It no longer silently fails.
 - **Exploded component view** — one tap separates the tower into labeled layers (structure, façade, glass, lighting, core, radome, visitors, greenery, paving) and animates them apart; tap again to reassemble.
 - **Per-component detail** — click a marker number or list entry to see the layer's Chinese name, description, height, triangle count and material count.
 - **Day / Night lighting** — a moon button swaps the whole scene between bright daylight and a lit-up night mode (exposure, environment, sun and emissive lights all adapt). **Defaults to day.**
 - **Draggable sun** — azimuth and elevation sliders reposition the directional light and its real-time shadow map.
-- **Bilingual labels** — Indonesian UI with Chinese (中文) component names.
+- **Bilingual labels** — English UI with Chinese (中文) component names.
 - **Responsive** — a desktop 3-column layout on large screens and a compact, mobile-friendly layout on phones.
 - **Self-contained & private** — the page ships **minified & obfuscated** with an anti-copy layer (see below).
 
@@ -23,8 +23,8 @@ A real-time, interactive 3D explorer for the **Oriental Pearl Tower (东方明�
 | --- | --- |
 | Drag | Orbit the camera |
 | Scroll / pinch | Zoom in & out |
-| **Pisahkan komponen** | Explode the tower into layers / reassemble |
-| **Mode malam** | Toggle day ⇄ night lighting |
+| **Explode components** | Explode the tower into layers / reassemble |
+| **Night mode** | Toggle day ⇄ night lighting |
 | Sun sliders | Move the sun (azimuth & elevation) |
 | Click a marker / list row | Show that component's details |
 
