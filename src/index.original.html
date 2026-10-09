@@ -39,49 +39,32 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&text=%E4%B8%9C%E6%96%B9%E6%98%8E%E7%8F%A0&display=swap" rel="stylesheet">
 <script>
-/* Unduh GLB sedini mungkin, paralel dengan three.js, sambil MENGHITUNG PROGRES
-   nyata di sini (bukan nanti setelah three.js selesai) supaya bar langsung bergerak.
-   Catatan: elemen #lt/#lb belum ada di DOM saat script ini jalan, jadi akses
-   elemen dilakukan lazy + progres terakhir disimpan untuk diterapkan saat DOM siap. */
+/* Unduh core GLB sedini mungkin, paralel dengan three.js, dan hitung progres byte
+   NYATA di sini (sebelum three.js selesai) supaya bar bergerak dari detik pertama.
+   #lt/#lb belum ada saat script ini jalan, jadi update ditunda ke DOMContentLoaded. */
 (function(){
-  var lastPct=0.02,lastMsg='Menghubungkan…',domReady=false;
-  function apply(){
-    if(!domReady)return;
-    var lt=document.getElementById('lt'),lb=document.getElementById('lb');
-    if(lt&&lastMsg)lt.textContent=lastMsg;
-    if(lb)lb.style.width=Math.round(Math.max(0,Math.min(1,lastPct))*100)+'%';
-  }
+  var lastPct=0,lastMsg='Menghubungkan…',domReady=false;
+  function apply(){if(!domReady)return;var lt=document.getElementById('lt'),lb=document.getElementById('lb');
+    if(lt&&lastMsg)lt.textContent=lastMsg;if(lb)lb.style.width=Math.round(Math.max(0,Math.min(1,lastPct))*100)+'%'}
   function stage(s){lastMsg=s;apply()}
   function setp(f){if(f>lastPct)lastPct=f;apply()}
-  function onReady(){domReady=true;apply()}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',onReady,{once:true});
-  else onReady();
-  window.__glbProg={setp:setp,stage:stage};
-  window.__glb=fetch('./oriental-pearl-tower.glb',{cache:'default'}).then(function(r){
+  function ready(){domReady=true;apply()}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
+  window.__prog={setp:setp,stage:stage};
+  function readStream(res,onFrac){
+    if(!res.body||!res.body.getReader)return res.arrayBuffer();
+    var rd=res.body.getReader(),got=0,chunks=[];
+    return (function pump(){return rd.read().then(function(x){
+      if(x.done){var b=new Uint8Array(got),o=0;for(var i=0;i<chunks.length;i++){b.set(chunks[i],o);o+=chunks[i].length}return b.buffer}
+      chunks.push(x.value);got+=x.value.length;if(onFrac)onFrac(got);return pump()})})();
+  }
+  // CORE (9.7 MB) — prioritas utama, progress 5%..85%
+  window.__core=fetch('./oriental-pearl-tower-core.glb').then(function(r){
     if(!r.ok)throw new Error('HTTP '+r.status);
     var total=+r.headers.get('content-length')||0;
-    if(!r.body||!r.body.getReader){return r}
-    var rd=r.body.getReader(),got=0,chunks=[],last=0;
-    return new Promise(function(res,rej){
-      (function pump(){
-        rd.read().then(function(x){
-          if(x.done){
-            var buf=new Uint8Array(got),o=0;
-            for(var i=0;i<chunks.length;i++){buf.set(chunks[i],o);o+=chunks[i].length}
-            var R2=new Response(buf,{headers:{'Content-Type':'model/gltf-binary','Content-Length':String(got)}});
-            R2._buffer=buf.buffer;res(R2);return;
-          }
-          chunks.push(x.value);got+=x.value.length;
-          var f=total?got/total:Math.min(.98,got/17.6e6);
-          /* geser rentang unduh GLB ke 5%–80% dari total, sisakan untuk parse */
-          setp(.05+.75*f);
-          stage('Mengunduh model 3D… '+Math.round(f*100)+'%  ('+(got/1048576).toFixed(1)+' MB'+(total?' / '+(total/1048576).toFixed(1)+' MB':'')+')');
-          if(performance.now()-last>120){last=performance.now()}
-          pump();
-        }).catch(rej);
-      })();
-    });
-  }).catch(function(e){window.__glbErr=e;return null});
+    return readStream(r,function(got){var f=total?got/total:Math.min(.98,got/10.2e6);f=Math.min(1,f);
+      setp(.05+.80*f);stage('Mengunduh menara… '+Math.round(f*100)+'%  ('+(got/1048576).toFixed(1)+' MB'+(total?' / '+(total/1048576).toFixed(1)+' MB':'')+')')});
+  }).catch(function(e){window.__coreErr=e;return null});
 })();
 </script>
 <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js" crossorigin>
@@ -135,7 +118,6 @@ h1{font-size:clamp(22px,2.6vw,34px);line-height:1.15;margin:14px 0 10px;font-wei
 #ld.off{opacity:0;pointer-events:none}
 #ld .bar{width:220px;height:4px;border-radius:4px;background:var(--line);margin:14px auto 0;overflow:hidden}
 #ld .bar i{display:block;height:100%;width:0;background:var(--acc);transition:width .2s}
-#ld .hint{margin:10px 0 0;color:var(--mut);font-size:12px;opacity:.85}
 #ld p{margin:0;color:var(--mut);font-size:14px;max-width:36ch;line-height:1.5}
 #ld label{display:inline-block;margin-top:14px}
 .ft{position:fixed;left:0;right:0;bottom:max(8px,env(safe-area-inset-bottom,0px));text-align:center;font-size:12px;color:var(--mut);pointer-events:none;z-index:1;transition:color .9s}
@@ -177,7 +159,7 @@ h1{font-size:clamp(22px,2.6vw,34px);line-height:1.15;margin:14px 0 10px;font-wei
   <nav class="r" aria-label="Daftar komponen"><h2 id="hc">Komponen</h2><ul id="ls"></ul></nav>
 </main>
 <footer class="ft">© 2026 Oriental Pearl Tower 3D · Designed &amp; built by <b>FIQTOR</b> · All rights reserved</footer>
-<div id="ld"><div><p id="lt">Memuat model 3D…</p><div class="bar"><i id="lb"></i></div><p class="hint">Model 16 MB · unduhan dimulai sebelum tampilan disiapkan</p></div></div>
+<div id="ld"><div><p id="lt">Memuat model 3D…</p><div class="bar"><i id="lb"></i></div></div></div>
 <section class="sr">
   <h2>Oriental Pearl Tower (东方明珠), menara ikonik Shanghai</h2>
   <p>Menara Radio dan TV Mutiara Oriental berdiri di distrik Pudong, Shanghai, dengan tinggi 468 meter. Menara ini dikenal lewat bola-bola merah muda yang ditopang tiga tiang miring. Halaman ini menampilkan model 3D interaktifnya: putar dan zoom model, bongkar komponen seperti antena, kapsul, bola atas, tiang dan inti, bola bawah, serta plaza, atur arah matahari, dan lihat tampilan malam hari.</p>
@@ -186,16 +168,11 @@ h1{font-size:clamp(22px,2.6vw,34px);line-height:1.15;margin:14px 0 10px;font-wei
 <noscript><p style="position:fixed;inset:0;display:grid;place-items:center;background:#f2f6fc;color:#12203a;margin:0;padding:24px;text-align:center;z-index:9">Halaman ini membutuhkan JavaScript untuk menampilkan model 3D Menara Mutiara Oriental.</p></noscript>
 
 <script type="module">
-const _PB=window.__glbProg||{};
-const M=await Promise.all([
-  import('three'),
-  import('three/addons/controls/OrbitControls.js'),
-  import('three/addons/loaders/GLTFLoader.js'),
-  import('three/addons/loaders/DRACOLoader.js'),
-  import('three/addons/environments/RoomEnvironment.js')
-]);
-_PB.setp&&_PB.setp(.82);_PB.stage&&_PB.stage('Menyiapkan tampilan…');
-const THREE=M[0],{OrbitControls}=M[1],{GLTFLoader}=M[2],{DRACOLoader}=M[3],{RoomEnvironment}=M[4];
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 
 const $=s=>document.querySelector(s),pad=n=>String(n).padStart(2,'0');
 const RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -289,12 +266,13 @@ const gl=new GLTFLoader().setDRACOLoader(dl);
 const bar=f=>{$('#lb').style.width=Math.round(Math.min(1,f)*100)+'%'};
 function fail(e){
   const file=location.protocol==='file:';
-  $('#lt').innerHTML=(file?'Halaman dibuka langsung dari file. Jalankan lewat server (misalnya <b>npx serve</b>) atau deploy ke Vercel.':'Berkas <b>oriental-pearl-tower.glb</b> tidak bisa dimuat. Pastikan ada di folder yang sama dengan index.html.')+'<br>Atau pilih berkasnya langsung:<br><label class="btn main">Pilih berkas .glb<input type="file" accept=".glb" hidden id="fi"></label>';
+  $('#lt').innerHTML=(file?'Halaman dibuka langsung dari file. Jalankan lewat server (misalnya <b>npx serve</b>) atau deploy ke Vercel.':'Berkas <b>oriental-pearl-tower-core.glb</b> tidak bisa dimuat. Pastikan ada di folder yang sama dengan index.html.')+'<br>Atau pilih berkasnya langsung:<br><label class="btn main">Pilih berkas .glb<input type="file" accept=".glb" hidden id="fi"></label>';
   $('#lb').style.width='0';console.error(e);
   $('#fi').onchange=async ev=>{const f=ev.target.files[0];if(f){$('#lt').textContent='Menyiapkan model…';parse(await f.arrayBuffer())}};
 }
+const _PB=window.__prog||{};
 function parse(buf){
-  $('#lt').textContent='Menyiapkan model…';bar(.85);
+  $('#lt').textContent='Menyiapkan model…';bar(.9);
   gl.parse(buf,'./',
     build,
     err=>{
@@ -305,17 +283,9 @@ function parse(buf){
 }
 (async()=>{
   try{
-    if(_PB.stage)_PB.stage('Menyiapkan tampilan…');bar(.82);
-    const r=await window.__glb;if(!r)throw window.__glbErr||new Error('GLB tidak ditemukan');
-    let buf;
-    if(r._buffer){buf=new Uint8Array(r._buffer)}
-    else{
-      const total=+r.headers.get('content-length')||0;let got=0;const chunks=[];
-      const rd=r.body.getReader();
-      for(;;){const {done,value}=await rd.read();if(done)break;chunks.push(value);got+=value.length;bar(.05+.75*(total?got/total:Math.min(.98,got/17.6e6)))}
-      buf=new Uint8Array(got);let o=0;for(const c of chunks){buf.set(c,o);o+=c.length}
-    }
-    parse(buf.buffer);
+    if(_PB.stage)_PB.stage('Menyiapkan tampilan…');bar(.85);
+    const buf=await window.__core;if(!buf)throw window.__coreErr||new Error('GLB tidak ditemukan');
+    parse(buf);
   }catch(e){fail(e)}
 })();
 
@@ -328,6 +298,7 @@ function build(g){
     const pl=seg.node==='01_Plaza',B={},meshes=[];
     node.traverse(o=>{if(o.isMesh)meshes.push(o)});
     meshes.forEach(m=>{const l=cls(m.material.name||'',pl);(B[l]=B[l]||[]).push(m)});
+    if(pl&&!B.park)B.park=[]; /* slot pohon dipesan; isinya dimuat belakangan */
     Object.keys(B).forEach(l=>{
       if(EXTRA.includes(l)||l==='frame'||!B[l]||triOf(B[l])>=150)return;
       const to=B.frame?'frame':Object.keys(B).find(x=>x!==l&&!EXTRA.includes(x));
@@ -347,10 +318,11 @@ function build(g){
         grp.add(m);
       });
       grp.updateMatrixWorld(true);
-      const box=new THREE.Box3().setFromObject(grp);
+      const empty=!B[l].length;
+      const box=empty?new THREE.Box3(new THREE.Vector3(-140,0,-140),new THREE.Vector3(140,14,140)):new THREE.Box3().setFromObject(grp);
       const ex=EXTRA.includes(l),k2=pl&&!ex?1.8:1;
       const off=new THREE.Vector3(...seg.y).add(new THREE.Vector3(...LAY[l]).multiplyScalar(k2));
-      parts.push({i:parts.length,si,seg,l,grp,box,off,meshes:B[l],tri:triOf(B[l]),mats:names.size,h:box.max.y-box.min.y,
+      parts.push({i:parts.length,si,seg,l,grp,box,off,loading:empty,meshes:B[l],tri:triOf(B[l]),mats:names.size,h:box.max.y-box.min.y,
         n:ex?LN[l]:`${seg.n} · ${LN[l]}`,z:ex?LZ[l]:seg.z,d:LD[l]});
     });
   });
@@ -368,6 +340,28 @@ function build(g){
   $('#hc').textContent=parts.length+' komponen';$('#hn').textContent=parts.length;
   applyNight();select(null);sd=3;
   $('#ld').classList.add('off');$('#bx').disabled=false;ready=true;
+  const tp=parts.find(x=>x.l==='park');
+  if(tp&&tp.loading&&!(navigator.connection&&navigator.connection.saveData))setTimeout(loadTrees,MOB?2500:300);
+  else if(tp&&tp.loading){tp.loading=false;tp.d+=' (dilewati: mode hemat data)'}
+}
+
+/* pohon (6,7 MB) dimuat belakangan supaya menara tampil lebih cepat */
+function fillTrees(g){
+  const p=parts.find(x=>x.l==='park');if(!p)return;
+  const ms=[],names=new Set();g.scene.traverse(o=>{if(o.isMesh)ms.push(o)});
+  ms.forEach(m=>{names.add((m.material.name||'').replace(/^WEB \| /,''));m.material=m.material.clone();
+    m.userData.e0=m.material.emissive.clone();m.userData.i0=m.material.emissiveIntensity;
+    m.castShadow=!MOB;m.receiveShadow=true;m.updateMatrix();m.matrixAutoUpdate=false;p.grp.add(m)});
+  p.meshes=ms;p.grp.updateMatrixWorld(true);
+  const box=new THREE.Box3().setFromObject(p.grp);box.translate(p.grp.position.clone().negate());
+  p.box=box;p.tri=triOf(ms);p.mats=names.size;p.h=box.max.y-box.min.y;p.loading=false;
+  sd=3;if(sel===p.i)select(sel);else paint();
+}
+function loadTrees(){
+  const p=parts.find(x=>x.l==='park');
+  fetch('./oriental-pearl-tower-trees.glb').then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.arrayBuffer()})
+    .then(b=>gl.parse(b,'./',fillTrees,fb)).catch(fb);
+  function fb(e){console.warn(e);if(p){p.loading=false;p.d+=' (gagal dimuat)'}}
 }
 
 function paint(){parts.forEach(p=>{const on=p.i===sel||p.i===hov;p.meshes.forEach(m=>{const t=m.material,u=m.userData;
@@ -378,7 +372,7 @@ function select(i){sel=i;
   parts.forEach(p=>p.badge&&p.badge.classList.toggle('on',p.i===i));
   const pn=$('#pn'),p=parts[i];
   if(i===null||!p){pn.textContent='Seret untuk memutar, scroll untuk zoom. Klik nomor di model atau daftar komponen untuk melihat detailnya.'}
-  else{pn.innerHTML=`<b>${pad(i+1)} ${p.n}</b><span class="z" lang="zh">${p.z}</span><p>${p.d}</p><div class="st">${p.h.toFixed(0)} m · ${nf.format(Math.round(p.tri/1000))} rb segitiga · ${p.mats} material</div>`;
+  else{pn.innerHTML=`<b>${pad(i+1)} ${p.n}</b><span class="z" lang="zh">${p.z}</span><p>${p.d}</p><div class="st">${p.loading?'Sedang dimuat di latar belakang…':`${p.h.toFixed(0)} m · ${nf.format(Math.round(p.tri/1000))} rb segitiga · ${p.mats} material`}</div>`;
     const el=document.querySelector(`.r button[data-i="${i}"]`);if(el&&innerWidth>900)el.scrollIntoView({block:'nearest'})}
   paint()}
 
@@ -441,6 +435,24 @@ function tick(now){requestAnimationFrame(tick);
   if(sd>0){R.shadowMap.needsUpdate=true;sd--}
   R.render(S,cam);adapt(now)}
 requestAnimationFrame(tick);
+/* anti-copy tambahan: blok print/simpan, drag, pilih-elemen lewat drag, dan pintasan devtools lain */
+(function(){
+  var stop=function(e){if(e&&e.preventDefault)e.preventDefault();if(e)e.returnValue=false;return false};
+  try{
+    // cegah simpan halaman / print (Ctrl+S, Ctrl+P, Ctrl+Shift+P)
+    addEventListener('keydown',function(e){
+      var k=(e.key||'').toLowerCase();
+      if((e.ctrlKey||e.metaKey)&&(k==='s'||k==='p'))return stop(e);
+      if(e.ctrlKey&&e.shiftKey&&k==='p')return stop(e);
+      if(e.ctrlKey&&e.shiftKey&&['e','h','m','w','y'].indexOf(k)>-1)return stop(e);
+    },true);
+    // cegah drag-save pada canvas/gambar
+    document.addEventListener('dragstart',stop,true);
+    document.addEventListener('selectstart',function(e){var t=e.target;if(t&&(t.id==='c'||t.tagName==='CANVAS'))return stop(e)},true);
+    // cegah tarik-lepas tautan
+    addEventListener('drop',stop,true);
+  }catch(e){}
+})();
 </script>
 </body>
 </html>

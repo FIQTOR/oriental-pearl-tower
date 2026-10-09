@@ -51,8 +51,19 @@ html = html.replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi, (full, attrs, bod
   const hasSrc = /\bsrc\s*=/i.test(attrs);
   if (isImportmap || isData || hasSrc || !body.trim()) return full;
   try {
-    // clone opts; only module scripts use sourceType:'module' + preserve top-level await
-    const opts = Object.assign({}, OPTS, isModule ? {} : { sourceType: 'script' });
+    // clone opts; only module scripts use sourceType:'module' + preserve top-level await.
+    // Non-module blocks (the tiny <head> preloader) stay off control-flow flattening so
+    // they execute instantly and stay small — string/base64 obfuscation is enough there.
+    const opts = Object.assign({}, OPTS, isModule ? {} : {
+      sourceType: 'script',
+      controlFlowFlattening: false,
+      deadCodeInjection: false,
+      numbersToExpressions: false,
+      selfDefending: false,
+      splitStrings: true,
+      stringArray: true,
+      stringArrayEncoding: ['base64'],
+    });
     const out = Obfuscator.obfuscate(body, opts).getObfuscatedCode();
     obf++;
     console.log(`  [obf${isModule ? '-module' : ''}] ${body.length} -> ${out.length} bytes`);

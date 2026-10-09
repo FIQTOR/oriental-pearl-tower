@@ -41,7 +41,8 @@ A real-time, interactive 3D explorer for the **Oriental Pearl Tower (东方明�
 .
 ├── index.html                 # The whole experience (obfuscated, production build)
 ├── src/index.original.html    # Readable source (kept in repo)
-├── oriental-pearl-tower.glb   # Draco-compressed 3D model (16 MB, preloaded in parallel)
+├── oriental-pearl-tower-core.glb   # Draco model — tower + plaza (9.7 MB, preloaded in parallel)
+├── oriental-pearl-tower-trees.glb  # Draco model — trees only (6.4 MB, lazy-loaded after the tower)
 ├── draco/                     # Local Draco decoder (js + wasm) with CDN fallbacks
 │   ├── draco_decoder.js
 │   ├── draco_decoder.wasm
@@ -70,7 +71,7 @@ or any static host / Vercel / Netlify / GitHub Pages.
 
 ## 🔒 Source & Build
 
-The published `index.html` is **minified & obfuscated** (control-flow flattening + base64 string encryption) with a lightweight anti-copy layer that blocks right-click, DevTools shortcuts (`F12`, `Ctrl+U`, `Ctrl+Shift+I/J/C`…) and iframe embedding.
+The published `index.html` is **minified & obfuscated** (control-flow flattening + base64 string encryption) with a lightweight anti-copy layer that blocks right-click, DevTools / View-Source shortcuts (`F12`, `Ctrl+U`, `Ctrl+Shift+I/J/C`, `Ctrl+S/P`…), print/save, drag-save and iframe embedding.
 
 ```bash
 # rebuild the obfuscated page from the readable source
@@ -79,15 +80,25 @@ NODE_PATH=./node_modules node obftool/obf-module.js src/index.original.html inde
 
 ### Loading experience
 
-The 16 MB GLB is fetched from a tiny inline `<script>` in `<head>` — **before** Three.js
-loads — so the download starts immediately and in parallel. The download itself is read
-through a `ReadableStream` reader so the progress bar reflects **real bytes received**
-(`x MB / 16.1 MB`), instead of jumping from 0% to 100% at the end. Progress is stored
-before the DOM exists and applied on `DOMContentLoaded`.
+The model is split into **two Draco GLBs** so the tower appears as early as possible:
+
+1. **`oriental-pearl-tower-core.glb` (9.7 MB)** — tower + plaza. Fetched from a tiny inline
+   `<script>` in `<head>` — **before** Three.js loads — so the download starts immediately
+   and in parallel with the engine. It is read through a `ReadableStream` reader so the
+   progress bar reflects **real bytes received** (`x MB / 9.7 MB`) instead of jumping from
+   0% → 100% at the end. Progress is buffered before the DOM exists and applied on
+   `DOMContentLoaded`.
+2. **`oriental-pearl-tower-trees.glb` (6.4 MB)** — trees are **lazy-loaded in the background
+   after the tower is interactive** (skipped entirely when `navigator.connection.saveData`).
+
+The local **Draco decoder** (`/draco/`) is preloaded and used first, with jsDelivr and
+gstatic CDN fallbacks. The GLBs are Brotli-compressed by Vercel (~13 MB total transfer).
 
 > The readable source (`src/index.original.html`) is kept in-repo for maintenance; the
 > published `index.html` is the obfuscated build. Client-side code can never be fully
 > hidden — obfuscation raises the bar rather than making reverse-engineering impossible.
+> An anti-copy layer blocks right-click, DevTools/View-Source shortcuts, print/save,
+> drag-save and iframe embedding.
 
 ## 📄 License & Credits
 
