@@ -73,6 +73,33 @@
   }
   window.__grabCore=grabCore;
   window.__core=grabCore();
+
+  /* ---- global safety net: if anything fails to boot (e.g. a CDN module never loads),
+     never leave the user stuck on the loading screen. This lives OUTSIDE the module so
+     it still runs even when the ES-module script never executes. ---- */
+  var booted=false;
+  window.__booted=function(){booted=true};
+  function showBootError(msg){
+    if(booted)return;
+    var ld=document.getElementById('ld'),lt=document.getElementById('lt');
+    if(!lt)return;
+    if(ld)ld.classList.remove('off');
+    lt.innerHTML=msg+'<br>You can retry:'+
+      '<div style="margin-top:14px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">'+
+      '<button class="btn main" onclick="location.reload()">Retry</button>'+
+      '<label class="btn">Choose a .glb file<input type="file" accept=".glb" hidden onchange="var f=this.files[0];if(f){window.__manualFile=f}"></label></div>';
+    // if a manual file was picked, forward it to the module if it is listening
+    document.addEventListener('change',function(){if(window.__manualFile&&window.__useManual)window.__useManual(window.__manualFile)});
+  }
+  window.addEventListener('error',function(e){
+    if(booted)return;
+    // only surface errors that happen before the scene is ready
+    var m=(e&&e.message)||'';
+    if(/module|import|fetch|three|WebGL|Chunk/i.test(m)||!/\w/.test(m))showBootError('Could not start the 3D viewer.');
+  });
+  window.addEventListener('unhandledrejection',function(){if(!booted)showBootError('Could not start the 3D viewer.')});
+  // hard deadline: if the scene has not signalled ready, tell the user instead of hanging
+  setTimeout(function(){if(!booted)showBootError('Loading is taking too long — this is usually a network/CDN hiccup.')},30000);
 })();
 </script>
 <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js" crossorigin>
@@ -176,11 +203,23 @@ h1{font-size:clamp(22px,2.6vw,34px);line-height:1.15;margin:14px 0 10px;font-wei
 <noscript><p style="position:fixed;inset:0;display:grid;place-items:center;background:#f2f6fc;color:#12203a;margin:0;padding:24px;text-align:center;z-index:9">This page requires JavaScript to display the 3D model of the Oriental Pearl Tower.</p></noscript>
 
 <script type="module">
-import * as THREE from 'three';
-import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
-import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
-import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+/* Dynamic imports with a timeout + CDN fallback so a single slow/blocked CDN can never
+   freeze the whole page on the loading screen. */
+function importWithTimeout(spec,ms,alt){
+  return Promise.race([
+    import(spec),
+    new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout '+spec)),ms))
+  ]).catch(err=>{if(alt&&alt!==spec)return importWithTimeout(alt,ms,null);throw err});
+}
+const coreSpecs=[
+  ['three','https://unpkg.com/three@0.164.1/build/three.module.js'],
+  ['three/addons/controls/OrbitControls.js','https://unpkg.com/three@0.164.1/examples/jsm/controls/OrbitControls.js'],
+  ['three/addons/loaders/GLTFLoader.js','https://unpkg.com/three@0.164.1/examples/jsm/loaders/GLTFLoader.js'],
+  ['three/addons/loaders/DRACOLoader.js','https://unpkg.com/three@0.164.1/examples/jsm/loaders/DRACOLoader.js'],
+  ['three/addons/environments/RoomEnvironment.js','https://unpkg.com/three@0.164.1/examples/jsm/environments/RoomEnvironment.js']
+];
+const M=await Promise.all(coreSpecs.map(s=>importWithTimeout(s[0],12000,s[1])));
+const THREE=M[0],{OrbitControls}=M[1],{GLTFLoader}=M[2],{DRACOLoader}=M[3],{RoomEnvironment}=M[4];
 
 const $=s=>document.querySelector(s),pad=n=>String(n).padStart(2,'0');
 const RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -305,6 +344,8 @@ function showError(msg){
   const rt=$('#rt');if(rt)rt.onclick=retry;
   $('#fi').onchange=async ev=>{const f=ev.target.files[0];if(f){$('#lt').textContent='Preparing model…';parse(await f.arrayBuffer())}};
 }
+/* let the head-level fallback file picker hand a chosen file to this module */
+window.__useManual=async function(f){if(!f)return;$('#lt').textContent='Preparing model…';finished=false;clearTimeout(watchdog);parse(await f.arrayBuffer())};
 function fail(e){console.error(e);showError('The file <b>oriental-pearl-tower-core.glb</b> could not be loaded. Make sure it sits in the same folder as index.html.')}
 function retry(){
   $('#lt').textContent='Retrying…';$('#lb').style.width='0';finished=false;dracoIdx=0;newLoader();resetScene();
@@ -328,7 +369,12 @@ function parse(buf){
   try{
     if(_PB.stage)_PB.stage('Preparing view…');bar(.85);
     startWatchdog();
-    const buf=await window.__core;if(!buf)throw window.__coreErr||new Error('GLB not found');
+    // guard against a stalled download stream (never leave the await hanging forever)
+    const buf=await Promise.race([
+      window.__core,
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('download timeout')),45000))
+    ]);
+    if(!buf)throw window.__coreErr||new Error('GLB not found');
     parse(buf);
   }catch(e){fail(e)}
 })();
@@ -384,6 +430,7 @@ function build(g){
   $('#hc').textContent=parts.length+' components';$('#hn').textContent=parts.length;
   applyNight();select(null);sd=3;
   $('#ld').classList.add('off');$('#bx').disabled=false;ready=true;finished=true;clearTimeout(watchdog);
+  if(window.__booted)window.__booted();
   const tp=parts.find(x=>x.l==='park');
   if(tp&&tp.loading&&!(navigator.connection&&navigator.connection.saveData))setTimeout(loadTrees,MOB?2500:300);
   else if(tp&&tp.loading){tp.loading=false;tp.d+=' (skipped: data-saver mode)'}
